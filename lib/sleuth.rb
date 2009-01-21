@@ -7,6 +7,7 @@ class Sleuth
   
   WATCHDOG = 'http://watchdog.net'
   SUNLIGHT = 'http://services.sunlightlabs.com/api'
+  NYTIMES  = 'http://api.nytimes.com/svc/politics/v2/us/legislative/congress'
   
   
   # Dig up all the dirt available about a congressman...
@@ -42,6 +43,13 @@ class Sleuth
       data.delete 'earmarks_sponsored'  # Always seems to return a list of nils.
       data
     end
+  end
+  
+  # Dig up dirt from the Gray Lady...
+  def search_nytimes(first_name, last_name)
+    # NYTimes API doesn't seem to return much useful congressional data,
+    # nor does it allow you to search by name.
+    # Maybe implement this later.
   end
   
   

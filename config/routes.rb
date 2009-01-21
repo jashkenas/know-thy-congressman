@@ -34,6 +34,8 @@ ActionController::Routing::Routes.draw do |map|
   # map.root :controller => "welcome"
 
   # See how all your routes lay out with "rake routes"
+  
+  map.search 'find/:name', :controller => 'congressional', :action => 'find'
 
   # Install the default routes as the lowest priority.
   map.connect ':controller/:action/:id'
