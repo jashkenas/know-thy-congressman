@@ -5,21 +5,28 @@ require 'json'
 
 class Sleuth
   
-  WATCHDOG = 'http://watchdog.net'
-  SUNLIGHT = 'http://services.sunlightlabs.com/api'
-  NYTIMES  = 'http://api.nytimes.com/svc/politics/v2/us/legislative/congress'
+  WATCHDOG    = 'http://watchdog.net'
+  SUNLIGHT    = 'http://services.sunlightlabs.com/api'
+  NYTIMES     = 'http://api.nytimes.com/svc/politics/v2/us/legislative/congress'
+  OPENSECRETS = 'http://www.opensecrets.org/api/?output=json'
   
   
   # Dig up all the dirt available about a congressman...
   def dig_up_dirt(first_name, last_name)
     first_name.downcase! and last_name.downcase!
-    sunlight_data, watchdog_data = nil, nil
+    sunlight_data, watchdog_data, contributor_data, industry_data = nil, nil, nil, nil
     
     sunlight = Thread.new { sunlight_data = search_sunlight_labs(first_name, last_name) }
     watchdog = Thread.new { watchdog_data = search_watchdog(first_name, last_name) }
     sunlight.join and watchdog.join
+    data = sunlight_data.merge(watchdog_data)
     
-    sunlight_data.merge(watchdog_data)
+    return data unless os_id = data['opensecretsid']
+    contributor = Thread.new { contributor_data = search_opensecrets_contributors(os_id) }
+    industry = Thread.new { industry_data = search_opensecrets_industries(os_id)}
+    contributor.join and industry.join
+    
+    data.merge(contributor_data).merge(industry_data)
   end
   
   
@@ -44,6 +51,32 @@ class Sleuth
       data
     end
   end
+  
+  
+  # Dig up dirt from OpenSecrets.org about individual campaign contributors...
+  def search_opensecrets_contributors(id)
+    safe_request do
+      data = {}
+      url = "#{OPENSECRETS}&method=candContrib&cid=#{id}&apikey=#{SECRETS['opensecrets']}"
+      info = JSON.parse(RestClient.get(url))['response']['contributors']['contributor']
+      data['opensecrets_contributors'] = info.map {|el| el['@attributes'] }
+      data
+    end
+  end
+  
+  
+  # Dig up dirt from OpenSecrets.org about industry campaign contributors...
+  def search_opensecrets_industries(id)
+    safe_request do
+      data = {}
+      url = "#{OPENSECRETS}&method=candIndustry&cid=#{id}&apikey=#{SECRETS['opensecrets']}"
+      info = JSON.parse(RestClient.get(url))['response']['industries']['industry']
+      data['opensecrets_industries'] = info.map {|el| el['@attributes'] }
+      data
+    end
+  end
+  
+  
   
   # Dig up dirt from the Gray Lady...
   def search_nytimes(first_name, last_name)
