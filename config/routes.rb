@@ -35,8 +35,9 @@ ActionController::Routing::Routes.draw do |map|
 
   # See how all your routes lay out with "rake routes"
   
-  map.search 'find/:name.:format', :controller => 'congressional', :action => 'find'
   map.index '/', :controller => 'congressional', :action => 'bookmarklet'
+  map.search 'find/:name.:format', :controller => 'congressional', :action => 'find'
+  map.templates 'templates.:format', :controller => 'congressional', :action => 'templates'
 
   # Install the default routes as the lowest priority.
   map.connect ':controller/:action/:id'

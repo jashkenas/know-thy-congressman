@@ -1,1 +1,1 @@
-javascript:(function(){window.KTC_ROOT='<%= SERVER_ROOT -%>';var script=document.createElement('script');script.src='<%= SERVER_ROOT %>/javascripts/know-thy-congressman.js';document.getElementsByTagName('head')[0].appendChild(script);})();
+javascript:(function(){if(window.KTC){return KTC.Politician.run();};window.KTC_ROOT='<%= SERVER_ROOT -%>';var script=document.createElement('script');script.src='<%= SERVER_ROOT %>/javascripts/know-thy-congressman.js';document.getElementsByTagName('head')[0].appendChild(script);})();

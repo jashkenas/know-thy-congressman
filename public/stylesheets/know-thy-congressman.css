@@ -1,0 +1,12 @@
+#ktc {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 400px;
+  margin-top: -200px; margin-left: -200px;
+  background: #e2e8e4;
+  border: 5px solid #d0d8d0;
+  padding: 20px;
+}
+  #ktc h1 {
+    font: bold 18px Georgia;
+  }
