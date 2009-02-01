@@ -1,12 +1,83 @@
+/*----- COLORS ------
+Dark:         #383435
+Yellow:       #f5e900
+LightYellow:  #f8ef96
+White:        #f4f6f5
+-------------------*/
+
+
 #ktc {
+  border: 1px solid #b0b8b0;
+  color: #383435;
+  font-weight: lighter;
+  font-family: "Whitney-Medium SC", Arial, sans-serif;
   position: absolute;
-  top: 50%; left: 50%;
-  width: 400px;
-  margin-top: -200px; margin-left: -200px;
-  background: #e2e8e4;
-  border: 5px solid #d0d8d0;
-  padding: 20px;
+  top: 50px; left: 50px;
+  width: 795px;
+  height: 600px;
+  z-index: 1000;
 }
-  #ktc h1 {
-    font: bold 18px Georgia;
+#ktc .ktc_inner {
+  position: relative;
+  height: 600px;
+  margin: 20px 10px 20px 20px;
+}
+  #ktc .backer {
+    background: #f4f6f5;
+    position: absolute;
+    top: -20px; right: -10px; left: -20px; bottom: 20px;
+    opacity: 0.92;
   }
+  #ktc h1 {
+    font-size: 50px;
+    margin: 0;
+    font-weight: lighter;
+    font-family: "Whitney-Medium SC", Arial, sans-serif;
+  }
+  #ktc .portrait {
+    border: 1px solid #b0b8b0;
+    position: absolute;
+    right: 10px; top: 0px;
+  }
+  #ktc .ktc_content {
+    position: relative;
+    z-index: 5;
+  }
+  #ktc .blocks {
+    padding-top: 85px;
+  }
+    #ktc .block {
+      border-top: 3px double #b0b8b0;
+      width: 500px; height: 100px;
+      margin-right: 10px;
+      float: left;
+    }
+      #ktc .block.third {
+        width: 245px;
+      }
+      #ktc .block.quarter {
+        width: 160px;
+      }
+      #ktc .block.short {
+        height: 110px;
+      }
+      #ktc .block.tall {
+        height: 175px;
+      }
+        #ktc .block .label {
+          font: 11px Arial, sans-serif;
+          margin: 3px 0 0 0;
+          text-transform: uppercase;
+        }
+        #ktc .block .content {
+          font-size: 35px;
+          margin: 10px 0 0 2px;
+        }
+          #ktc .block.big .content {
+            font-size: 60px;
+          }
+          #ktc .block.xbig .content {
+            font-size: 85px;
+          }
+      
+    

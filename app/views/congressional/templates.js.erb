@@ -1,3 +1,3 @@
 KTC.templates = {
-  <%= @templates.map{|t| "#{t[:name]} : KTC.createTemplate('#{t[:content].gsub(/(\r|\n)/, '')}')"}.join(',') %>
+  <%= @templates.map{|t| "#{t[:name]} : KTC.Util.createTemplate('#{t[:content].gsub(/(\r|\n)/, '')}')"}.join(',') %>
 };
