@@ -18,13 +18,8 @@ KTC = {
       };
       
       this.fonts = {
-        whitneyBook    : KTC_ROOT + '/javascripts/type/whitney-book_regular.typeface.js', 
-        whitneyLightSC : KTC_ROOT + '/javascripts/type/whitney-light_sc_regular.typeface.js',
-        whitneyLight   : KTC_ROOT + '/javascripts/type/whitney-light_regular.typeface.js',
-        whitneyBold    : KTC_ROOT + '/javascripts/type/whitney-bold_regular.typeface.js',
-        whitneyMed     : KTC_ROOT + '/javascripts/type/whitney-medium_regular.typeface.js',
-        whitneyMedSC   : KTC_ROOT + '/javascripts/type/whitney-medium_sc_regular.typeface.js',
-        politicaXT     : KTC_ROOT + '/javascripts/type/politica_xt_regular.typeface.js'
+        politicaXT        : KTC_ROOT + '/type/politica_xt_regular.typeface.js',
+        politicaXTBoldIT  : KTC_ROOT + '/type/politica_xt_bold_italic.typeface.js'
       };
       
       this.loadStylesheet(this.urls.stylesheet);
@@ -34,8 +29,7 @@ KTC = {
       });
       this.loadJavascript(this.urls.numbers);
       this.loadJavascript(this.urls.templates);
-      this.loadJavascript(this.urls.typeface);
-      this.loadJavascript(this.fonts.whitneyMediumSC);
+      this.loadJavascript(this.urls.processing);
     },
     
     // Get a reference to the document's head tag
@@ -68,20 +62,34 @@ KTC = {
   Politician : {
     
     INFO_TO_DISPLAY : [
-      ['requested_earmarks',  'Earmarks Requested',            'third'],
-      ['received_earmarks',   'Earmarks Received',             'third'],
-      ['birthplace',          'Birthplace',                    'big'],
-      ['the_birthday',        'Birthday',                      'third'],
-      ['n_bills_cosponsored', 'Number of Bills Co-Sponsored',  'xbig third'],
-      ['n_bills_introduced',  'Number of Bills Introduced',    'xbig third'],
-      ['n_bills_enacted',     'Number of Bills Enacted',       'xbig third']
-      
+      ['n_speeches',          'Number of Speeches Given',     'xbig'],
+      ['words_per_speech',    'Average Words per Speech',     'xbig'],
+      ['requested_earmarks',  'Earmarks Requested',           ''],
+      ['received_earmarks',   'Earmarks Received',            ''],
+      ['the_birthday',        'Birthday',                     ''],
+      ['birthplace',          'Birthplace',                   'double'],
+      ['education',           'Education',                    'xsmall triple open'],
+      ['n_bills_cosponsored', 'Bills Co-Sponsored',           'half xbig thin'],
+      ['n_bills_introduced',  'Bills Introduced',             'half xbig thin'],
+      ['n_bills_debated',     'Bills Debated',                'half xbig thin'],
+      ['n_bills_enacted',     'Bills Enacted',                'half xbig']
+    ],
+    
+    CANVASES_TO_DRAW : [
+      { before : 'n_bills_cosponsored', 
+        id : 'ktc_bills_canvas',
+        klass : 'triple xbig', 
+        data : ['n_bills_cosponsored', 'n_bills_introduced', 
+                'n_bills_debated', 'n_bills_enacted']
+      }
     ],
     
     MONTH_MAP : {
       '01' : 'Jan', '02' : 'Feb', '03' : 'Mar', '04' : 'Apr', '05' : 'May', '06' : 'Jun', 
       '07' : 'Jul', '08' : 'Aug', '09' : 'Sep', '10' : 'Oct', '11' : 'Nov', '12' : 'Dec'
     },
+    
+    UNKNOWN : '--',
     
     // TODO: Remove the default
     DEFAULT_POLITICIAN : 'Clinton, Hillary',
@@ -110,15 +118,28 @@ KTC = {
     mungeData : function(data) {
       data.name = data.firstname + " " + data.lastname;
       data.requested_earmarks = KTC.Util.friendlyMoney(data.amt_earmark_requested);
-      data.received_earmarks = KTC.Util.friendlyMoney(data.amt_earmark_received);
-      data.birthplace = data.birthplace || 'unknown';
+      data.received_earmarks = KTC.Util.friendlyMoney(data.amt_earmark_received) + 
+        " <small>(" + data.n_earmark_received + " of " + data.n_earmark_requested + ")</small>";
+      data.birthplace = data.birthplace || this.UNKNOWN;
       data.the_birthday = this.mungeDate(data.birthday);
+      data.education = this.mungeEducation(data.education);
       return data;
+    },
+    
+    // Get a properly-formatted education out of the data.
+    // Remove honorary degrees (what do they really count for anyway? ...)
+    mungeEducation : function(edu) {
+      if (!edu) return this.UNKNOWN;
+      var degrees = [];
+      $.each(edu.replace(/\.$/, '').split(/\W*\n\W*/), function() {
+        if (!this.match(/honorary/i)) degrees.push(this);
+      });
+      return degrees.join("<br />");
     },
     
     // Convert a computer-ish date to a "Oct 10, 1976"-style one.
     mungeDate : function(date) {
-      if (!date) return '--';
+      if (!date) return this.UNKNOWN;
       var parts = date.split('-');
       var year = parts[0]; var month = parts[1]; var day = parts[2];
       return this.MONTH_MAP[month] + " " + day + ", " + year;
@@ -127,7 +148,7 @@ KTC = {
     // Convert a name to standard firstName_lastName form.
     mungeName : function(name) {
       if (name.match(/,/)) name = name.split(/,\s*/).reverse().join(' ');
-      name = name.split(/\W/);
+      name = name.replace(/(^\W*|\W*$)/g, '').split(/\W/);
       return name[0] + '_' + name[name.length-1];
     },
     
@@ -136,9 +157,9 @@ KTC = {
     loaded : function(data) {
       data = window.eval("("+data+")");
       data = this.mungeData(data);
-      if (console.log) console.log(data);
+      if (console && console.log) console.log(data);
       this.render(data);
-      KTC.typefaceInit();
+      // KTC.typefaceInit();
       $('#ktc').draggable();
     },
     
@@ -149,6 +170,7 @@ KTC = {
       $('body').append(html);
       this.element = $('#ktc');
       $.each(this.INFO_TO_DISPLAY, function(){ KTC.Politician.renderBlock(this, data); });
+      $.each(this.CANVASES_TO_DRAW, function(){ KTC.Grapher.visualize(this, data); });
     },
     
     // Render a single datum in a block.
@@ -161,8 +183,80 @@ KTC = {
   },
   
   
+  // Graphing functions, for working with Processing-JS
+  Grapher : {
+    
+    CURVE_FACTOR : 0.5,
+        
+    // Visualize the data provided according to the meta.
+    visualize : function(meta, data) {
+      var toPrecede = $('#ktc .block.' + meta.before);
+      toPrecede.before(KTC.templates.canvas(meta));
+      var canvas = $("#" + meta.id + " canvas");
+      var width = canvas.width();
+      var height = canvas.height();
+      var p = Processing(canvas.get()[0]);
+      p.size(width, height);
+      p.fill("#00e9f5");
+      p.noStroke();
+            
+      var nums = $.map(meta.data, function(name){ return data[name]; });
+      var scale = height / KTC.Util.arrayMax(nums);
+      var segment = width / (nums.length - 1);
+      var div = segment * (1 - this.CURVE_FACTOR);
+      var prev_x = 0; var prev_y = 0;
+      p.beginShape();
+      p.vertex(0, height);
+      $.each(nums, function(i, num) {
+        var x = segment * i;
+        var y = height - num * scale;
+        if (i == 0) p.vertex(x, y);
+        if (i != 0) p.bezierVertex(x - div, prev_y, prev_x + div, y, x, y);
+        if (i == nums.length - 1) p.vertex(x, y);
+        prev_x = x; prev_y = y;
+      });
+      p.vertex(width, height);
+      p.vertex(0, height);
+      p.endShape();
+      
+    //   
+    //   @nums = [2012, 1496, 152, 22]
+    //   @scale = height.to_f / @nums.max.to_f
+    //   frame_rate 10
+    //   smooth
+    // 
+    //   
+    //   nums = @nums.map {|n| n / @scale}
+    //   segment = width / (@nums.length-1).to_f
+    //   div = segment * (1 - CURVE_FACTOR)
+    //   prev_x, prev_y = 0, 0
+    //   begin_shape
+    //     vertex 0, height
+    //     @nums.each_with_index do |num, i|
+    //       x = segment * i
+    //       y = height - num * @scale
+    //       vertex x, y if i == 0
+    //       bezier_vertex x-div, prev_y, prev_x+div, y, x, y unless i == 0
+    //       vertex x, y if i == @nums.length - 1
+    //       prev_x, prev_y = x, y
+    //     end
+    //     vertex width, height
+    //     vertex 0, height
+    //   end_shape
+    // end
+      
+    }
+    
+  },
+  
+  
   // Utility functions
   Util : {
+    
+    // Get the maximum number from an array
+    arrayMax : function(arr) {
+      return arr.sort(function(a,b){ return b - a; })[0];
+    },
    
     // Templating adapted from http://ejohn.org/blog/javascript-micro-templating/
     createTemplate : function(st) {
@@ -181,7 +275,7 @@ KTC = {
     
     // Parse dollars at politician scale into something a little less staggering.
     friendlyMoney : function(dollars) {
-      if (!dollars) return '--';
+      if (!dollars) return KTC.Politician.UNKNOWN;
       var scale = (dollars > 1000000) ? ['mil', '0,0,, '] : ['grand', '0,0, '];            
       var money = dollars.numberFormat(scale[1]) + scale[0];
       return "$" + money.replace(/^0/, '');
@@ -190,6 +284,5 @@ KTC = {
   }
   
 };
-
 
 KTC.Loader.initialize();

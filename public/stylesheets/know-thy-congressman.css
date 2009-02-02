@@ -3,23 +3,24 @@ Dark:         #383435
 Yellow:       #f5e900
 LightYellow:  #f8ef96
 White:        #f4f6f5
+Blue?:        #00e9f5
 -------------------*/
-
 
 #ktc {
   border: 1px solid #b0b8b0;
   color: #383435;
-  font-weight: lighter;
-  font-family: "Whitney-Medium SC", Arial, sans-serif;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
   position: absolute;
   top: 50px; left: 50px;
   width: 795px;
-  height: 600px;
+  height: 840px;
   z-index: 1000;
+  text-align: left;
 }
 #ktc .ktc_inner {
   position: relative;
-  height: 600px;
+  height: 840px;
   margin: 20px 10px 20px 20px;
 }
   #ktc .backer {
@@ -28,56 +29,96 @@ White:        #f4f6f5
     top: -20px; right: -10px; left: -20px; bottom: 20px;
     opacity: 0.92;
   }
-  #ktc h1 {
-    font-size: 50px;
+  #ktc .header {
     margin: 0;
-    font-weight: lighter;
-    font-family: "Whitney-Medium SC", Arial, sans-serif;
+    position: absolute;
+    font-size: 50px;
   }
   #ktc .portrait {
     border: 1px solid #b0b8b0;
     position: absolute;
     right: 10px; top: 0px;
+    height: 175px;
   }
   #ktc .ktc_content {
     position: relative;
     z-index: 5;
   }
   #ktc .blocks {
-    padding-top: 85px;
+    padding-top: 197px;
   }
     #ktc .block {
       border-top: 3px double #b0b8b0;
-      width: 500px; height: 100px;
+      width: 245px; height: 75px;
       margin-right: 10px;
       float: left;
+      overflow: hidden;
     }
-      #ktc .block.third {
-        width: 245px;
+      #ktc .block.canvas {
+        clear: both;
+        position: absolute;
+        border-top: 0px;
+        margin-top: 3px;
+        z-index: -1;
       }
-      #ktc .block.quarter {
-        width: 160px;
+      #ktc .block.half {
+        width: 181px;
       }
-      #ktc .block.short {
+      #ktc .block.double {
+        width: 500px;
+      }
+      #ktc .block.triple {
+        width: 755px;
+      }
+      #ktc .block.xbig {
         height: 110px;
       }
-      #ktc .block.tall {
-        height: 175px;
+      #ktc .block.thin {
+        font-weight: normal;
       }
-        #ktc .block .label {
+      #ktc .block.open {
+        height: auto;
+        padding-bottom: 20px;
+      }
+        #ktc .block .question {
           font: 11px Arial, sans-serif;
           margin: 3px 0 0 0;
           text-transform: uppercase;
         }
-        #ktc .block .content {
+        #ktc .block .answer {
           font-size: 35px;
-          margin: 10px 0 0 2px;
+          margin: 5px 0 0 2px;
         }
-          #ktc .block.big .content {
-            font-size: 60px;
+          #ktc .block.xbig .answer {
+            line-height: 75px;
+            font-size: 90px;
           }
-          #ktc .block.xbig .content {
-            font-size: 85px;
+          #ktc .block.xsmall .answer {
+            font-size: 16px;
+            font-variant: small-caps;
+            line-height: 18px;
           }
+            #ktc .block small {
+              font: normal 11px Arial, sans-serif;
+            }
+            
+            
+/* ------- Let's get specific ----------- */
+
+#ktc .block.n_bills_cosponsored .answer {
+  line-height: 36px;
+  font-size: 40px;
+}
+#ktc .block.n_bills_introduced .answer {
+  line-height: 48px;
+  font-size: 55px;
+}
+#ktc .block.n_bills_debated .answer {
+  line-height: 63px;
+  font-size: 75px;
+}
+#ktc #ktc_bills_canvas {
+  margin-top: 317px;
+}
       
     
