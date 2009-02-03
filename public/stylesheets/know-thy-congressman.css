@@ -52,7 +52,6 @@ Blue?:        #00e9f5
       width: 245px; height: 75px;
       margin-right: 10px;
       float: left;
-      overflow: hidden;
     }
       #ktc .block.canvas {
         clear: both;
@@ -61,8 +60,11 @@ Blue?:        #00e9f5
         margin-top: 3px;
         z-index: -1;
       }
-      #ktc .block.half {
+      #ktc .block.short {
         width: 181px;
+      }
+      #ktc .block.half {
+        width: 372px;
       }
       #ktc .block.double {
         width: 500px;
@@ -90,8 +92,8 @@ Blue?:        #00e9f5
           margin: 5px 0 0 2px;
         }
           #ktc .block.xbig .answer {
-            line-height: 75px;
-            font-size: 90px;
+            line-height: 67px;
+            font-size: 70px;
           }
           #ktc .block.xsmall .answer {
             font-size: 16px;
@@ -104,7 +106,6 @@ Blue?:        #00e9f5
             
             
 /* ------- Let's get specific ----------- */
-
 #ktc .block.n_bills_cosponsored .answer {
   line-height: 36px;
   font-size: 40px;
@@ -116,9 +117,6 @@ Blue?:        #00e9f5
 #ktc .block.n_bills_debated .answer {
   line-height: 63px;
   font-size: 75px;
-}
-#ktc #ktc_bills_canvas {
-  margin-top: 317px;
 }
       
     

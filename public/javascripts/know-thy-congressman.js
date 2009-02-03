@@ -29,7 +29,6 @@ KTC = {
       });
       this.loadJavascript(this.urls.numbers);
       this.loadJavascript(this.urls.templates);
-      this.loadJavascript(this.urls.processing);
     },
     
     // Get a reference to the document's head tag
@@ -62,25 +61,35 @@ KTC = {
   Politician : {
     
     INFO_TO_DISPLAY : [
-      ['n_speeches',          'Number of Speeches Given',     'xbig'],
-      ['words_per_speech',    'Average Words per Speech',     'xbig'],
       ['requested_earmarks',  'Earmarks Requested',           ''],
       ['received_earmarks',   'Earmarks Received',            ''],
-      ['the_birthday',        'Birthday',                     ''],
-      ['birthplace',          'Birthplace',                   'double'],
+      ['maverickometer',      "Maverick-O-Meter",             ''],
+      ['born',                'Born',                         'double'],
+      ['speeches',            'Average Words per Speech',     ''],
       ['education',           'Education',                    'xsmall triple open'],
-      ['n_bills_cosponsored', 'Bills Co-Sponsored',           'half xbig thin'],
-      ['n_bills_introduced',  'Bills Introduced',             'half xbig thin'],
-      ['n_bills_debated',     'Bills Debated',                'half xbig thin'],
-      ['n_bills_enacted',     'Bills Enacted',                'half xbig']
+      ['n_bills_cosponsored', 'Bills Co-Sponsored',           'short xbig thin'],
+      ['n_bills_introduced',  'Bills Introduced',             'short xbig thin'],
+      ['n_bills_debated',     'Bills Debated',                'short xbig thin'],
+      ['n_bills_enacted',     'Bills Enacted',                'short xbig'],
+      ['industry_support',    'Top 5 Industries',             'half table'],
+      ['institution_support', 'Top 5 Institutions',           'half table']
     ],
     
     CANVASES_TO_DRAW : [
-      { before : 'n_bills_cosponsored', 
+      { 
+        before : 'n_bills_cosponsored', 
         id : 'ktc_bills_canvas',
-        klass : 'triple xbig', 
+        klass : 'xbig triple',
+        width: 754, height: 110,
         data : ['n_bills_cosponsored', 'n_bills_introduced', 
                 'n_bills_debated', 'n_bills_enacted']
+      },
+      {
+        before : 'requested_earmarks',
+        width: 500, height: 75,
+        klass : 'xbig triple',
+        id : 'ktc_earmarks_canvas',
+        data : ['amt_earmark_requested', 'amt_earmark_received']
       }
     ],
     
@@ -88,6 +97,8 @@ KTC = {
       '01' : 'Jan', '02' : 'Feb', '03' : 'Mar', '04' : 'Apr', '05' : 'May', '06' : 'Jun', 
       '07' : 'Jul', '08' : 'Aug', '09' : 'Sep', '10' : 'Oct', '11' : 'Nov', '12' : 'Dec'
     },
+    
+    TOP_N_CONTRIBUTORS : 5,
     
     UNKNOWN : '--',
     
@@ -120,10 +131,25 @@ KTC = {
       data.requested_earmarks = KTC.Util.friendlyMoney(data.amt_earmark_requested);
       data.received_earmarks = KTC.Util.friendlyMoney(data.amt_earmark_received) + 
         " <small>(" + data.n_earmark_received + " of " + data.n_earmark_requested + ")</small>";
-      data.birthplace = data.birthplace || this.UNKNOWN;
-      data.the_birthday = this.mungeDate(data.birthday);
+      data.born = (data.birthplace || this.UNKNOWN) + ' <small>(' + this.mungeDate(data.birthday) + ")</span>";
       data.education = this.mungeEducation(data.education);
+      data.maverickometer = ((1 - data.predictability) * 100).numberFormat("0.0") + '%';
+      data.speeches = data.words_per_speech + " <small>(spoke " + data.n_speeches + " times)</small>";
+      data.industry_support = this.mungeTable(data, 'opensecrets_industries');
+      data.institution_support = this.mungeTable(data, 'opensecrets_contributors');
       return data;
+    },
+    
+    // Create a campaign contribution table from the given data source
+    mungeTable : function(data, key) {
+      var result = "";
+      for (var i=0; i<this.TOP_N_CONTRIBUTORS; i++) {
+        var el = data[key][i];
+        var name = el.org_name || el.industry_name;
+        var total = KTC.Util.friendlyMoney(el.total);
+        result += KTC.templates.row({name : name, total : total});
+      }
+      return result;
     },
     
     // Get a properly-formatted education out of the data.
@@ -183,68 +209,45 @@ KTC = {
   },
   
   
-  // Graphing functions, for working with Processing-JS
+  // Graphing functions, for working with Canvases
   Grapher : {
     
     CURVE_FACTOR : 0.5,
         
     // Visualize the data provided according to the meta.
     visualize : function(meta, data) {
+      var firstBlock = $('#ktc .block');
       var toPrecede = $('#ktc .block.' + meta.before);
       toPrecede.before(KTC.templates.canvas(meta));
-      var canvas = $("#" + meta.id + " canvas");
-      var width = canvas.width();
-      var height = canvas.height();
-      var p = Processing(canvas.get()[0]);
-      p.size(width, height);
-      p.fill("#00e9f5");
-      p.noStroke();
+      // It's absolutely positioned, so we gotta stick it in the right place.
+      var canvas = $('#' + meta.id);
+      var top = toPrecede.offset().top - firstBlock.offset().top;
+      var left = toPrecede.offset().left - firstBlock.offset().left;
+      canvas.css({'margin-top' : top + 3, 'margin-left' : left});
+      canvas = canvas.find('canvas');
+      var width = meta.width; var height = meta.height;
+      var p = canvas.get()[0].getContext('2d');
+      p.fillStyle = "#00e9f5";
+      p.strokeWidth = 0;
             
       var nums = $.map(meta.data, function(name){ return data[name]; });
       var scale = height / KTC.Util.arrayMax(nums);
       var segment = width / (nums.length - 1);
       var div = segment * (1 - this.CURVE_FACTOR);
       var prev_x = 0; var prev_y = 0;
-      p.beginShape();
-      p.vertex(0, height);
+      p.beginPath();
+      p.moveTo(0, height);
       $.each(nums, function(i, num) {
         var x = segment * i;
         var y = height - num * scale;
-        if (i == 0) p.vertex(x, y);
-        if (i != 0) p.bezierVertex(x - div, prev_y, prev_x + div, y, x, y);
-        if (i == nums.length - 1) p.vertex(x, y);
+        if (i == 0) p.lineTo(x, y);
+        if (i != 0) p.bezierCurveTo(x - div, prev_y, prev_x + div, y, x, y);
+        if (i == nums.length - 1) p.lineTo(x, y);
         prev_x = x; prev_y = y;
       });
-      p.vertex(width, height);
-      p.vertex(0, height);
-      p.endShape();
-      
-    //   
-    //   @nums = [2012, 1496, 152, 22]
-    //   @scale = height.to_f / @nums.max.to_f
-    //   frame_rate 10
-    //   smooth
-    // 
-    //   
-    //   nums = @nums.map {|n| n / @scale}
-    //   segment = width / (@nums.length-1).to_f
-    //   div = segment * (1 - CURVE_FACTOR)
-    //   prev_x, prev_y = 0, 0
-    //   begin_shape
-    //     vertex 0, height
-    //     @nums.each_with_index do |num, i|
-    //       x = segment * i
-    //       y = height - num * @scale
-    //       vertex x, y if i == 0
-    //       bezier_vertex x-div, prev_y, prev_x+div, y, x, y unless i == 0
-    //       vertex x, y if i == @nums.length - 1
-    //       prev_x, prev_y = x, y
-    //     end
-    //     vertex width, height
-    //     vertex 0, height
-    //   end_shape
-    // end
-      
+      p.lineTo(width, height);
+      p.lineTo(0, height);
+      p.fill();
     }
     
   },
@@ -277,7 +280,7 @@ KTC = {
     friendlyMoney : function(dollars) {
       if (!dollars) return KTC.Politician.UNKNOWN;
       var scale = (dollars > 1000000) ? ['mil', '0,0,, '] : ['grand', '0,0, '];            
-      var money = dollars.numberFormat(scale[1]) + scale[0];
+      var money = parseInt(dollars, 10).numberFormat(scale[1]) + scale[0];
       return "$" + money.replace(/^0/, '');
     }
     
