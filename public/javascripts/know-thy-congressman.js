@@ -71,7 +71,8 @@ KTC = {
       ['n_bills_introduced',  'Bills Introduced',             'short xbig thin'],
       ['n_bills_debated',     'Bills Debated',                'short xbig thin'],
       ['n_bills_enacted',     'Bills Enacted',                'short xbig'],
-      ['industry_support',    'Top 5 Industries',             'half table'],
+      ['photographs',         'Photographs',                  'triple'],
+      ['industry_support',    'Top 5 Groups',                 'half table'],
       ['institution_support', 'Top 5 Institutions',           'half table']
     ],
     
@@ -93,9 +94,21 @@ KTC = {
       }
     ],
     
+    PARTY_COLORS : {
+      'Republican' : '#f58980', 
+      'Democrat'   : '#00e9f5', 
+      'Other'      : '#f5e900'
+    },
+    
     MONTH_MAP : {
       '01' : 'Jan', '02' : 'Feb', '03' : 'Mar', '04' : 'Apr', '05' : 'May', '06' : 'Jun', 
       '07' : 'Jul', '08' : 'Aug', '09' : 'Sep', '10' : 'Oct', '11' : 'Nov', '12' : 'Dec'
+    },
+    
+    KIND_OF_CONGRESSMAN_MAP : {
+      'Sen' : 'Senator', 
+      'Rep' : 'Representative', 
+      'Del' : 'Delegate'
     },
     
     TOP_N_CONTRIBUTORS : 5,
@@ -127,14 +140,15 @@ KTC = {
     
     // Go through the data object, munging what we need to for display.
     mungeData : function(data) {
+      data.party_affiliation = (data.party == "Democrat") ? "Democratic" : data.party;
+      data.kind_of_congressman = this.KIND_OF_CONGRESSMAN_MAP[data.title];
       data.name = data.firstname + " " + data.lastname;
       data.requested_earmarks = KTC.Util.friendlyMoney(data.amt_earmark_requested);
-      data.received_earmarks = KTC.Util.friendlyMoney(data.amt_earmark_received) + 
-        " <small>(" + data.n_earmark_received + " of " + data.n_earmark_requested + ")</small>";
-      data.born = (data.birthplace || this.UNKNOWN) + ' <small>(' + this.mungeDate(data.birthday) + ")</span>";
+      data.received_earmarks = this.mungeReceivedEarmarks(data);
+      data.born = (KTC.Util.truncate(data.birthplace, 20) || this.UNKNOWN) + ' <small>(' + this.mungeDate(data.birthday) + ")</span>";
       data.education = this.mungeEducation(data.education);
-      data.maverickometer = ((1 - data.predictability) * 100).numberFormat("0.0") + '%';
-      data.speeches = data.words_per_speech + " <small>(spoke " + data.n_speeches + " times)</small>";
+      data.maverickometer = data.predictability ? ((1 - data.predictability) * 100).numberFormat("0.0") + '%' : this.UNKNOWN;
+      data.speeches = data.words_per_speech ? data.words_per_speech + " <small>(spoke " + data.n_speeches + " times)</small>" : this.UNKNOWN;
       data.industry_support = this.mungeTable(data, 'opensecrets_industries');
       data.institution_support = this.mungeTable(data, 'opensecrets_contributors');
       return data;
@@ -143,6 +157,7 @@ KTC = {
     // Create a campaign contribution table from the given data source
     mungeTable : function(data, key) {
       var result = "";
+      if (!data[key]) return;
       for (var i=0; i<this.TOP_N_CONTRIBUTORS; i++) {
         var el = data[key][i];
         var name = el.org_name || el.industry_name;
@@ -161,6 +176,14 @@ KTC = {
         if (!this.match(/honorary/i)) degrees.push(this);
       });
       return degrees.join("<br />");
+    },
+    
+    // Make a fault-tolerant received earmarks.
+    mungeReceivedEarmarks : function(data) {
+      var ending = data.n_earmark_received ? 
+          " <small>(" + data.n_earmark_received + " of " + data.n_earmark_requested + ")</small>" : 
+          "";
+      return KTC.Util.friendlyMoney(data.amt_earmark_received) + ending;
     },
     
     // Convert a computer-ish date to a "Oct 10, 1976"-style one.
@@ -185,7 +208,6 @@ KTC = {
       data = this.mungeData(data);
       if (console && console.log) console.log(data);
       this.render(data);
-      // KTC.typefaceInit();
       $('#ktc').draggable();
     },
     
@@ -197,6 +219,17 @@ KTC = {
       this.element = $('#ktc');
       $.each(this.INFO_TO_DISPLAY, function(){ KTC.Politician.renderBlock(this, data); });
       $.each(this.CANVASES_TO_DRAW, function(){ KTC.Grapher.visualize(this, data); });
+      this.renderPhotographs(data);
+    },
+    
+    // Render the Flickr photos from the data.
+    renderPhotographs : function(data) {
+      for (var i=0; i<9; i++) {
+        var photo = data.flickr[i];
+        if (!photo) return;
+        var html = KTC.templates.photograph(photo);
+        KTC.Politician.element.find('.photographs .answer').append(html);
+      }
     },
     
     // Render a single datum in a block.
@@ -227,7 +260,8 @@ KTC = {
       canvas = canvas.find('canvas');
       var width = meta.width; var height = meta.height;
       var p = canvas.get()[0].getContext('2d');
-      p.fillStyle = "#00e9f5";
+      var colors = KTC.Politician.PARTY_COLORS;
+      p.fillStyle = colors[data.party] || colors['Other'];
       p.strokeWidth = 0;
             
       var nums = $.map(meta.data, function(name){ return data[name]; });
@@ -259,6 +293,13 @@ KTC = {
     // Get the maximum number from an array
     arrayMax : function(arr) {
       return arr.sort(function(a,b){ return b - a; })[0];
+    },
+    
+    // Truncate a string, appending ellipsis.
+    truncate : function(string, length) {
+      if (!string) return null;
+      var ending = (string.length > length) ? '&hellip;' : '';
+      return string.substr(0, length-1) + ending;
     },
    
     // Templating adapted from http://ejohn.org/blog/javascript-micro-templating/

@@ -4,6 +4,7 @@ Yellow:       #f5e900
 LightYellow:  #f8ef96
 White:        #f4f6f5
 Blue?:        #00e9f5
+Pink?:        #c34642   From GOP.gov's seal
 -------------------*/
 
 #ktc {
@@ -14,25 +15,34 @@ Blue?:        #00e9f5
   position: absolute;
   top: 50px; left: 50px;
   width: 795px;
-  height: 840px;
+  height: 1040px;
   z-index: 1000;
   text-align: left;
 }
+#ktc a { border: none; }
+#ktc a img { border: none; }
 #ktc .ktc_inner {
   position: relative;
-  height: 840px;
+  height: 1040px;
   margin: 20px 10px 20px 20px;
 }
   #ktc .backer {
     background: #f4f6f5;
     position: absolute;
     top: -20px; right: -10px; left: -20px; bottom: 20px;
-    opacity: 0.92;
+    opacity: 0.96;
   }
-  #ktc .header {
+  #ktc .big_name {
     margin: 0;
     position: absolute;
     font-size: 50px;
+    top: 10px;
+  }
+  #ktc .what_is {
+    position: absolute;
+    left: 2px; top: 0;
+    text-transform: uppercase;
+    font: normal 11px Arial, sans-serif;
   }
   #ktc .portrait {
     border: 1px solid #b0b8b0;
@@ -89,7 +99,7 @@ Blue?:        #00e9f5
         }
         #ktc .block .answer {
           font-size: 35px;
-          margin: 5px 0 0 2px;
+          margin: 5px 0 0 5px;
         }
           #ktc .block.xbig .answer {
             line-height: 67px;
@@ -118,5 +128,27 @@ Blue?:        #00e9f5
   line-height: 63px;
   font-size: 75px;
 }
+#ktc .block.table .answer {
+  font-size: 14px;
+}
+  #ktc .table_row {
+    position: relative;
+    margin-bottom: 3px;
+  }
+    #ktc .table_total {
+      position: absolute;
+      right: 15px;
+      font: 11px Arial, sans-serif;
+      line-height: 18px;
+    }
+#ktc .block.photographs {
+  height: 114px;
+}
+  #ktc .block.photographs .photograph {
+    float: left;
+    margin-right: 4px;
+    font-size: 0px;
+    border: 2px solid #B0B8B0;
+  }
       
     
