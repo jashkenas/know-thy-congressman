@@ -7,13 +7,12 @@ Blue?:        #00e9f5
 Pink?:        #c34642   From GOP.gov's seal
 -------------------*/
 
-#ktc {
+#ktc.politician {
   border: 1px solid #b0b8b0;
   color: #383435;
   font-weight: bold;
   font-family: Arial, sans-serif;
   position: absolute;
-  top: 50px; left: 50px;
   width: 795px;
   height: 1040px;
   z-index: 1000;

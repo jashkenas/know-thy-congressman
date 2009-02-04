@@ -22,13 +22,28 @@ KTC = {
         politicaXTBoldIT  : KTC_ROOT + '/type/politica_xt_bold_italic.typeface.js'
       };
       
+      this.spinner = KTC.Util.createTemplate('<div id="ktc" style="position:absolute; background: #f4f6f5; border: 1px solid #b0b8b0;">searching for "<%= text %>"</div>');
+      
+      this.showSpinner();
+      
       this.loadStylesheet(this.urls.stylesheet);
       this.loadJavascript(this.urls.jquery, function() {
         KTC.Loader.loadJavascript(KTC.Loader.urls.jqueryDrag);
-        KTC.Politician.run(); 
+        KTC.Politician.run(true); 
       });
       this.loadJavascript(this.urls.numbers);
       this.loadJavascript(this.urls.templates);
+    },
+    
+    // Show the loading spinner, while we go and fetch the data...
+    // No javascript libraries or anything will have loaded by this point.
+    showSpinner : function() {
+      var spin = document.getElementById('ktc');
+      if (spin) spin.parentNode.removeChild(spin);
+      var text = KTC.Politician.searchText = KTC.Politician.getSelectedText();
+      document.body.innerHTML += this.spinner({text : text});
+      var spin = document.getElementById('ktc');
+      KTC.Util.centerElement(spin);
     },
     
     // Get a reference to the document's head tag
@@ -119,8 +134,9 @@ KTC = {
     DEFAULT_POLITICIAN : 'Clinton, Hillary',
     
     // Get started by searching for politician on the server
-    run : function() {
-      this.searchFor(this.getSelectedText());      
+    run : function(ignoreSpinner) {
+      if (!ignoreSpinner) KTC.Loader.showSpinner();
+      this.searchFor(this.searchText || this.getSelectedText());      
     },
     
     // Get the selected text from the document.
@@ -207,6 +223,7 @@ KTC = {
       data = window.eval("("+data+")");
       data = this.mungeData(data);
       if (console && console.log) console.log(data);
+      $('#ktc').remove();
       this.render(data);
       $('#ktc').draggable();
     },
@@ -217,6 +234,7 @@ KTC = {
       var html = KTC.templates.base(data);
       $('body').append(html);
       this.element = $('#ktc');
+      KTC.Util.centerElement(this.element[0]);
       $.each(this.INFO_TO_DISPLAY, function(){ KTC.Politician.renderBlock(this, data); });
       $.each(this.CANVASES_TO_DRAW, function(){ KTC.Grapher.visualize(this, data); });
       this.renderPhotographs(data);
@@ -274,6 +292,7 @@ KTC = {
       $.each(nums, function(i, num) {
         var x = segment * i;
         var y = height - num * scale;
+        console.log(meta.id + ' x: ' + x + " y: " + y);
         if (i == 0) p.lineTo(x, y);
         if (i != 0) p.bezierCurveTo(x - div, prev_y, prev_x + div, y, x, y);
         if (i == nums.length - 1) p.lineTo(x, y);
@@ -292,7 +311,7 @@ KTC = {
     
     // Get the maximum number from an array
     arrayMax : function(arr) {
-      return arr.sort(function(a,b){ return b - a; })[0];
+      return arr.slice().sort(function(a,b){ return b - a; })[0];
     },
     
     // Truncate a string, appending ellipsis.
@@ -300,6 +319,15 @@ KTC = {
       if (!string) return null;
       var ending = (string.length > length) ? '&hellip;' : '';
       return string.substr(0, length-1) + ending;
+    },
+    
+    // Center a DOM element, without use of JQuery.
+    centerElement : function(el) {
+      var top = window.scrollY + (window.innerHeight / 2) - (el.scrollHeight / 2);
+      var left = window.scrollX + (window.innerWidth / 2) - (el.scrollWidth / 2);
+      if (top < window.scrollY + 50) top = window.scrollY + 50;
+      el.style.top = top + 'px';
+      el.style.left = left + 'px';
     },
    
     // Templating adapted from http://ejohn.org/blog/javascript-micro-templating/
