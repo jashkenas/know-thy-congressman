@@ -14,7 +14,7 @@ Pink?:        #c34642   From GOP.gov's seal
   font-family: Arial, sans-serif;
   position: absolute;
   width: 795px;
-  height: 1040px;
+  height: 1540px;
   z-index: 1000;
   text-align: left;
 }
@@ -22,7 +22,7 @@ Pink?:        #c34642   From GOP.gov's seal
 #ktc a img { border: none; }
 #ktc .ktc_inner {
   position: relative;
-  height: 1040px;
+  height: 1540px;
   margin: 20px 10px 20px 20px;
 }
   #ktc .backer {
@@ -127,19 +127,22 @@ Pink?:        #c34642   From GOP.gov's seal
   line-height: 63px;
   font-size: 75px;
 }
-#ktc .block.table .answer {
-  font-size: 14px;
+#ktc .block.table {
+  height: 135px;
 }
-  #ktc .table_row {
-    position: relative;
-    margin-bottom: 3px;
+  #ktc .block.table .answer {
+    font-size: 14px;
   }
-    #ktc .table_total {
-      position: absolute;
-      right: 15px;
-      font: 11px Arial, sans-serif;
-      line-height: 18px;
+    #ktc .table_row {
+      position: relative;
+      margin-bottom: 3px;
     }
+      #ktc .table_total {
+        position: absolute;
+        right: 15px;
+        font: 11px Arial, sans-serif;
+        line-height: 18px;
+      }
 #ktc .block.photographs {
   height: 114px;
 }
@@ -149,5 +152,31 @@ Pink?:        #c34642   From GOP.gov's seal
     font-size: 0px;
     border: 2px solid #B0B8B0;
   }
+#ktc .block.articles .answer {
+  margin-top: 8px;
+}
+  #ktc a.nytimes_article {
+    display: block;
+    text-decoration: none;
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 12px;
+    margin-bottom: 8px;
+    color: #383435;
+  }
+    #ktc a.nytimes_article .article_title {
+      color: #004276;
+    }
+      #ktc a.nytimes_article .article_title:hover {
+        text-decoration: underline;
+      }
+    #ktc a.nytimes_article .article_body {
+      display: block;
+      color: #777;
+      font-weight: normal;
+      font-size: 12px;
+      height: 16px;
+      overflow: hidden;
+    }
+  
       
     

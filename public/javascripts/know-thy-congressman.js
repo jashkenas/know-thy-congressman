@@ -22,7 +22,13 @@ KTC = {
         politicaXTBoldIT  : KTC_ROOT + '/type/politica_xt_bold_italic.typeface.js'
       };
       
-      this.spinner = KTC.Util.createTemplate('<div id="ktc" style="position:absolute; background: #f4f6f5; border: 1px solid #b0b8b0;">searching for "<%= text %>"</div>');
+      // Using an inline template so we can display the spinner as rapidly as possible.
+      this.spinner = KTC.Util.createTemplate('\
+      <div id="ktc" style="position:absolute; border: 7px solid #b0b8b0; \
+        font: normal 12px Arial; padding: 8px 34px 8px 8px; background: #f4f6f5;">\
+        SEARCHING FOR: <span style="font-weight: bold;">"<%= text %>"</span>\
+        <img style="position:absolute; right:8px; top:4px;" src="' + KTC_ROOT + '/images/spinner.gif" alt="" />\
+      </div>');
       
       this.showSpinner();
       
@@ -35,6 +41,7 @@ KTC = {
       this.loadJavascript(this.urls.templates);
     },
     
+    
     // Show the loading spinner, while we go and fetch the data...
     // No javascript libraries or anything will have loaded by this point.
     showSpinner : function() {
@@ -43,13 +50,15 @@ KTC = {
       var text = KTC.Politician.searchText = KTC.Politician.getSelectedText();
       document.body.innerHTML += this.spinner({text : text});
       var spin = document.getElementById('ktc');
-      KTC.Util.centerElement(spin);
+      KTC.Util.alignElement(spin);
     },
+    
     
     // Get a reference to the document's head tag
     getHeadTag : function() {
       return document.getElementsByTagName('head')[0];
     },
+    
     
     // Load a javascript by source.
     loadJavascript : function(location, callback) {
@@ -59,6 +68,7 @@ KTC = {
       if (callback) script.onload = callback;
       this.getHeadTag().appendChild(script);
     },
+    
     
     // Load a stylesheet by source.
     loadStylesheet : function(location, callback) {
@@ -88,7 +98,8 @@ KTC = {
       ['n_bills_enacted',     'Bills Enacted',                'short xbig'],
       ['photographs',         'Photographs',                  'triple'],
       ['industry_support',    'Top 5 Groups',                 'half table'],
-      ['institution_support', 'Top 5 Institutions',           'half table']
+      ['institution_support', 'Top 5 Institutions',           'half table'],
+      ['articles',            'Recent NYTimes Articles',      'triple open']
     ],
     
     CANVASES_TO_DRAW : [
@@ -127,17 +138,20 @@ KTC = {
     },
     
     TOP_N_CONTRIBUTORS : 5,
+    TOP_N_ARTICLES     : 5,
     
     UNKNOWN : '--',
     
     // TODO: Remove the default
     DEFAULT_POLITICIAN : 'Clinton, Hillary',
     
+    
     // Get started by searching for politician on the server
     run : function(ignoreSpinner) {
       if (!ignoreSpinner) KTC.Loader.showSpinner();
       this.searchFor(this.searchText || this.getSelectedText());      
     },
+    
     
     // Get the selected text from the document.
     getSelectedText : function() {
@@ -147,12 +161,14 @@ KTC = {
       return text || this.DEFAULT_POLITICIAN;
     },
     
+    
     // Get the JSON data from Know-Thy-Congressman for a given politician.
     searchFor : function(name) {
       var data = {name : this.mungeName(name), callback : 'KTC.Politician.loaded'};
       var url = KTC.Loader.urls.politician(data);
       $.ajax({url : url, dataType : 'script'});
     },
+    
     
     // Go through the data object, munging what we need to for display.
     mungeData : function(data) {
@@ -167,21 +183,38 @@ KTC = {
       data.speeches = data.words_per_speech ? data.words_per_speech + " <small>(spoke " + data.n_speeches + " times)</small>" : this.UNKNOWN;
       data.industry_support = this.mungeTable(data, 'opensecrets_industries');
       data.institution_support = this.mungeTable(data, 'opensecrets_contributors');
+      data.articles = this.mungeArticles(data);
       return data;
     },
     
+    
     // Create a campaign contribution table from the given data source
     mungeTable : function(data, key) {
-      var result = "";
+      var html = '';
       if (!data[key]) return;
       for (var i=0; i<this.TOP_N_CONTRIBUTORS; i++) {
-        var el = data[key][i];
-        var name = el.org_name || el.industry_name;
-        var total = KTC.Util.friendlyMoney(el.total);
-        result += KTC.templates.row({name : name, total : total});
+        var cont = data[key][i];
+        var name = cont.org_name || cont.industry_name;
+        var total = KTC.Util.friendlyMoney(cont.total);
+        html += KTC.templates.contributor({name : name, total : total});
       }
-      return result;
+      return html;
     },
+    
+    
+    // Create a list of NYTimes Articles about the politician.
+    mungeArticles : function(data) {
+      var html = '';
+      if (!data.nytimes_articles || data.nytimes_articles.length <= 0) return this.UNKNOWN;
+      for (var i=0; i<this.TOP_N_ARTICLES; i++) {
+        var art = data.nytimes_articles[i];
+        art.date = KTC.Politician.mungeDate(art.date);
+        art.body = KTC.Util.truncate(art.body, 135);
+        html += KTC.templates.article(art);
+      }
+      return html;
+    },
+    
     
     // Get a properly-formatted education out of the data.
     // Remove honorary degrees (what do they really count for anyway? ...)
@@ -194,6 +227,7 @@ KTC = {
       return degrees.join("<br />");
     },
     
+    
     // Make a fault-tolerant received earmarks.
     mungeReceivedEarmarks : function(data) {
       var ending = data.n_earmark_received ? 
@@ -202,13 +236,21 @@ KTC = {
       return KTC.Util.friendlyMoney(data.amt_earmark_received) + ending;
     },
     
+    
     // Convert a computer-ish date to a "Oct 10, 1976"-style one.
     mungeDate : function(date) {
       if (!date) return this.UNKNOWN;
-      var parts = date.split('-');
-      var year = parts[0]; var month = parts[1]; var day = parts[2];
+      if (date.match(/-/)) {             // For "1976-10-10"
+        var parts = date.split('-');
+        var year  = parts[0]; var month = parts[1]; var day = parts[2];
+      } else if (date.match(/^\d+$/)) {  // For "19761010"
+        var year  = date.substr(0,4); 
+        var month = date.substr(4,2);
+        var day   = parseInt(date.substr(6,2), 10).toString();
+      }
       return this.MONTH_MAP[month] + " " + day + ", " + year;
     },
+    
     
     // Convert a name to standard firstName_lastName form.
     mungeName : function(name) {
@@ -216,6 +258,7 @@ KTC = {
       name = name.replace(/(^\W*|\W*$)/g, '').split(/\W/);
       return name[0] + '_' + name[name.length-1];
     },
+    
     
     // After the politician's data has loaded, we can really get started.
     // Munge the data as needed.
@@ -225,8 +268,12 @@ KTC = {
       if (console && console.log) console.log(data);
       $('#ktc').remove();
       this.render(data);
-      $('#ktc').draggable();
+      this.element.draggable();
+      KTC.Util.alignElement(this.element[0]);
+      this.element.hide();
+      this.element.fadeIn('slow');
     },
+    
     
     // Render KTC for a given congressman's data.
     render : function(data) {
@@ -234,11 +281,12 @@ KTC = {
       var html = KTC.templates.base(data);
       $('body').append(html);
       this.element = $('#ktc');
-      KTC.Util.centerElement(this.element[0]);
+      KTC.Util.alignElement(this.element[0], 'offscreen');
       $.each(this.INFO_TO_DISPLAY, function(){ KTC.Politician.renderBlock(this, data); });
       $.each(this.CANVASES_TO_DRAW, function(){ KTC.Grapher.visualize(this, data); });
       this.renderPhotographs(data);
     },
+    
     
     // Render the Flickr photos from the data.
     renderPhotographs : function(data) {
@@ -249,6 +297,7 @@ KTC = {
         KTC.Politician.element.find('.photographs .answer').append(html);
       }
     },
+    
     
     // Render a single datum in a block.
     renderBlock : function(meta, data) {
@@ -264,6 +313,7 @@ KTC = {
   Grapher : {
     
     CURVE_FACTOR : 0.5,
+        
         
     // Visualize the data provided according to the meta.
     visualize : function(meta, data) {
@@ -292,7 +342,6 @@ KTC = {
       $.each(nums, function(i, num) {
         var x = segment * i;
         var y = height - num * scale;
-        console.log(meta.id + ' x: ' + x + " y: " + y);
         if (i == 0) p.lineTo(x, y);
         if (i != 0) p.bezierCurveTo(x - div, prev_y, prev_x + div, y, x, y);
         if (i == nums.length - 1) p.lineTo(x, y);
@@ -314,6 +363,7 @@ KTC = {
       return arr.slice().sort(function(a,b){ return b - a; })[0];
     },
     
+    
     // Truncate a string, appending ellipsis.
     truncate : function(string, length) {
       if (!string) return null;
@@ -321,14 +371,20 @@ KTC = {
       return string.substr(0, length-1) + ending;
     },
     
+    
     // Center a DOM element, without use of JQuery.
-    centerElement : function(el) {
-      var top = window.scrollY + (window.innerHeight / 2) - (el.scrollHeight / 2);
-      var left = window.scrollX + (window.innerWidth / 2) - (el.scrollWidth / 2);
-      if (top < window.scrollY + 50) top = window.scrollY + 50;
+    alignElement : function(el, mode) {
+      if (mode == 'offscreen') {
+        var top = -5000; var left = -5000;
+      } else {
+        var top = window.scrollY + (window.innerHeight / 2) - (el.scrollHeight / 2);
+        var left = window.scrollX + (window.innerWidth / 2) - (el.scrollWidth / 2);
+        if (top < window.scrollY + 50) top = window.scrollY + 50;
+      }
       el.style.top = top + 'px';
       el.style.left = left + 'px';
     },
+   
    
     // Templating adapted from http://ejohn.org/blog/javascript-micro-templating/
     createTemplate : function(st) {
@@ -345,12 +401,28 @@ KTC = {
         + "');}return p.join('');");
     },
     
+    
     // Parse dollars at politician scale into something a little less staggering.
     friendlyMoney : function(dollars) {
       if (!dollars) return KTC.Politician.UNKNOWN;
       var scale = (dollars > 1000000) ? ['mil', '0,0,, '] : ['grand', '0,0, '];            
       var money = parseInt(dollars, 10).numberFormat(scale[1]) + scale[0];
       return "$" + money.replace(/^0/, '');
+    },
+    
+    
+    // Debugging function for quickly reloading the CSS on the page sans-refresh.
+    reloadCss : function(){
+      var process = function(win) {
+        var links = win.document.getElementsByTagName('link');
+        $.each(links, function(i, link){
+          if (link.rel.toLowerCase().indexOf('stylesheet') < 0 || !link.href) return;
+          var href = link.href.replace(/(&|%5C?)forceReload=\d+/,'');
+          link.href = href + (href.indexOf('?') >= 0 ? '&' : '?') + 'forceReload=' + (new Date().valueOf());
+        });
+        $.each(win.frames, function(i, frame){ process(frame); });
+      };
+      process(window);
     }
     
   }
