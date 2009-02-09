@@ -144,7 +144,7 @@ Pink?:        #c34642   From GOP.gov's seal
         line-height: 18px;
       }
 #ktc .block.photographs {
-  height: 114px;
+  height: 120px;
 }
   #ktc .block.photographs .photograph {
     float: left;
@@ -177,6 +177,22 @@ Pink?:        #c34642   From GOP.gov's seal
       height: 16px;
       overflow: hidden;
     }
+#ktc .words {
+  
+}
+  #ktc .words .capitol_word {
+    float: left;
+    width: 150px;
+    font-size: 16px;
+    line-height: 12px;
+    margin-top: 5px;
+  }
+  /*  #ktc .word_1 { font-size: 30px; line-height: 40px;}
+      #ktc .word_2 { font-size: 27px; line-height: 42px;}
+      #ktc .word_3 { font-size: 24px; line-height: 45px;}
+      #ktc .word_4 { font-size: 21px; line-height: 47px;}
+      #ktc .word_5 { font-size: 18px; line-height: 48px;}*/
+
   
       
     

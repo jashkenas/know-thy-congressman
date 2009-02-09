@@ -99,6 +99,7 @@ KTC = {
       ['photographs',         'Photographs',                  'triple'],
       ['industry_support',    'Top 5 Groups',                 'half table'],
       ['institution_support', 'Top 5 Institutions',           'half table'],
+      ['words',               'Top Words',                    'triple'],
       ['articles',            'Recent NYTimes Articles',      'triple open']
     ],
     
@@ -107,7 +108,7 @@ KTC = {
         before : 'n_bills_cosponsored', 
         id : 'ktc_bills_canvas',
         klass : 'xbig triple',
-        width: 754, height: 110,
+        width: 755, height: 110,
         data : ['n_bills_cosponsored', 'n_bills_introduced', 
                 'n_bills_debated', 'n_bills_enacted']
       },
@@ -117,6 +118,12 @@ KTC = {
         klass : 'xbig triple',
         id : 'ktc_earmarks_canvas',
         data : ['amt_earmark_requested', 'amt_earmark_received']
+      },
+      {
+        before : 'words',
+        width  : 755, height: 75,
+        id : 'ktc_words_canvas',
+        data : ['word_1', 'word_2', 'word_3', 'word_4', 'word_5']
       }
     ],
     
@@ -184,6 +191,7 @@ KTC = {
       data.industry_support = this.mungeTable(data, 'opensecrets_industries');
       data.institution_support = this.mungeTable(data, 'opensecrets_contributors');
       data.articles = this.mungeArticles(data);
+      data.words = this.mungeWords(data);
       return data;
     },
     
@@ -225,6 +233,24 @@ KTC = {
         if (!this.match(/honorary/i)) degrees.push(this);
       });
       return degrees.join("<br />");
+    },
+    
+    
+    // Build up the data for graphing top words.
+    mungeWords : function(data) {
+      var html = '';
+      if (!data.capitol_words || data.capitol_words.length <= 0) return this.UNKNOWN;
+      var counts = $.map(data.capitol_words, function(w){ return w.word_count; });
+      var max = KTC.Util.arrayMax(counts);
+      var min = KTC.Util.arrayMin(counts);
+      var ratio = KTC.Util.computeScalingFactor(30, 0, max, min);
+      $.each(data.capitol_words, function(i, word) { 
+        word.klass = 'word_' + (i + 1);
+        data[word.klass] = word.word_count;
+        word.font_size = 40 + ((word.word_count - min) * ratio);
+        html += KTC.templates.word(word);
+      });
+      return html;
     },
     
     
@@ -324,7 +350,8 @@ KTC = {
       var canvas = $('#' + meta.id);
       var top = toPrecede.offset().top - firstBlock.offset().top;
       var left = toPrecede.offset().left - firstBlock.offset().left;
-      canvas.css({'margin-top' : top + 3, 'margin-left' : left});
+      var yOff = meta.before == 'words' ? 6 : 3;
+      canvas.css({'margin-top' : top + yOff, 'margin-left' : left});
       canvas = canvas.find('canvas');
       var width = meta.width; var height = meta.height;
       var p = canvas.get()[0].getContext('2d');
@@ -358,9 +385,21 @@ KTC = {
   // Utility functions
   Util : {
     
-    // Get the maximum number from an array
-    arrayMax : function(arr) {
-      return arr.slice().sort(function(a,b){ return b - a; })[0];
+    // Sort an array numerically (default in javascript is alphabetically)
+    arraySort : function(arr) {
+      return arr.slice().sort(function(a,b){ return b - a; });
+    },
+    
+    
+    // Get the maximum or minimum number from an array
+    arrayMax : function(arr) { return this.arraySort(arr)[0]; },
+    arrayMin : function(arr) { return this.arraySort(arr)[arr.length - 1]; },
+    
+    
+    // Compute a scaling factor to transform inputs with a given maximum and
+    // minimum value onto a desired maximum and minimum range.
+    computeScalingFactor : function(desiredMax, desiredMin, actualMax, actualMin) {
+      return (desiredMax - desiredMin) / (actualMax - actualMin);
     },
     
     
