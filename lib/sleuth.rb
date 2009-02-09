@@ -5,13 +5,13 @@ require 'json'
 
 class Sleuth
   
-  WATCHDOG       = 'http://watchdog.net'
-  SUNLIGHT       = 'http://services.sunlightlabs.com/api'
-  OPENSECRETS    = 'http://www.opensecrets.org/api/?output=json'
-  FLICKR         = 'http://api.flickr.com/services/rest?method=flickr.photos.search&format=json&nojsoncallback=1?sort=relevance?perpage=10?extras=owner_name'
-  TIMES_TAGS     = 'http://api.nytimes.com/svc/timestags/suggest?filter=(Per)'
-  TIMES_ARTICLES = 'http://api.nytimes.com/svc/search/v1/article?fields=title,url,body,date'
-  CAPITOL_WORDS  = 'http://www.capitolwords.org/api/lawmaker'
+  WATCHDOG       = 'watchdog.net'
+  SUNLIGHT       = 'services.sunlightlabs.com/api'
+  OPENSECRETS    = 'www.opensecrets.org/api/?output=json'
+  FLICKR         = 'api.flickr.com/services/rest?method=flickr.photos.search&format=json&nojsoncallback=1?sort=relevance?perpage=10?extras=owner_name'
+  TIMES_TAGS     = 'api.nytimes.com/svc/timestags/suggest?filter=(Per)'
+  TIMES_ARTICLES = 'api.nytimes.com/svc/search/v1/article?fields=title,url,body,date'
+  CAPITOL_WORDS  = 'www.capitolwords.org/api/lawmaker'
   
   ONE_YEAR_IN_SECONDS = 31557600
   
@@ -29,7 +29,7 @@ class Sleuth
     first_name, last_name = extract_name_from_congresspedia
     bioguide_id = @data['bioguide_id']
     
-    watchdog = Thread.new { watchdog_data = search_watchdog(first_name, last_name) }
+    watchdog = Thread.new { watchdog_data = search_watchdog(bioguide_id) }
     flickr   = Thread.new { flickr_data   = search_flickr(first_name, last_name) }
     tags     = Thread.new { tags_data     = search_nytimes_tags(first_name, last_name) }
     words    = Thread.new { words_data    = search_capitol_words(bioguide_id) }
@@ -42,14 +42,14 @@ class Sleuth
     industry    = Thread.new { industry_data    = search_opensecrets_industries(os_id) }
     articles    = Thread.new { articles_data    = search_nytimes_articles(person_facet) }
     
-    contributor.join and industry.join and articles.join and flickr.join
+    contributor.join and industry.join and articles.join and flickr.join and words.join
     merge_data(contributor_data, industry_data, articles_data, flickr_data, words_data)
   end
   
   
   # Dig up dirt from Sunlight Labs...
   def search_sunlight_labs(first_name, last_name)
-    safe_request do
+    safe_request('sunlight') do
       url = "#{SUNLIGHT}/legislators.search.json?apikey=#{SECRETS['sunlight']}&name=#{first_name} #{last_name}"
       # We need to perform a little weighting ourselves, because Sunlight labs
       # sometimes produces wonky results (try searching for "Bill Young")...
@@ -66,9 +66,11 @@ class Sleuth
   
   
   # Dig up dirt about a given congressman at watchdog...
-  def search_watchdog(first_name, last_name)
-    safe_request do
-      url = "#{WATCHDOG}/p/#{first_name.downcase}_#{last_name.downcase}.json"
+  def search_watchdog(bioguide_id)
+    safe_request('watchdog', :ensure => bioguide_id) do
+      dog = Net::HTTP.new(WATCHDOG, 80)
+      redirected = dog.get("/p/search.json?bioguideid=#{bioguide_id}")
+      url = "#{redirected.header['location']}.json"      
       data = get_json(url).first
       data.delete 'bills_sponsored'     # Just a buncha URLS, not too useful.
       data.delete 'earmarks_sponsored'  # Always seems to return a list of nils.
@@ -79,7 +81,7 @@ class Sleuth
   
   # Dig up (embarrassing) photos of the politician on Flickr...
   def search_flickr(first_name, last_name)
-    safe_request do
+    safe_request('flickr') do
       url = "#{FLICKR}&api_key=#{SECRETS['flickr_key']}&text=\"#{first_name} #{last_name}\""
       data = get_json(url)
       {'flickr' => data['photos']['photo']}
@@ -88,9 +90,9 @@ class Sleuth
   
   
   # Dig up dirt from OpenSecrets.org about individual campaign contributors...
-  def search_opensecrets_contributors(id)
-    safe_request(:ensure => id) do
-      url = "#{OPENSECRETS}&method=candContrib&cid=#{id}&apikey=#{SECRETS['opensecrets']}"
+  def search_opensecrets_contributors(bioguide_id)
+    safe_request('opensecrets contributors', :ensure => bioguide_id) do
+      url = "#{OPENSECRETS}&method=candContrib&cid=#{bioguide_id}&apikey=#{SECRETS['opensecrets']}"
       info = get_json(url)['response']['contributors']['contributor']
       {'opensecrets_contributors' => info.map {|el| el['@attributes'] } }
     end
@@ -99,7 +101,7 @@ class Sleuth
   
   # Dig up dirt from OpenSecrets.org about industry campaign contributors...
   def search_opensecrets_industries(id)
-    safe_request(:ensure => id) do
+    safe_request('opensecrets industries', :ensure => id) do
       url = "#{OPENSECRETS}&method=candIndustry&cid=#{id}&apikey=#{SECRETS['opensecrets']}"
       info = get_json(url)['response']['industries']['industry']
       {'opensecrets_industries' => info.map {|el| el['@attributes'] } }
@@ -107,10 +109,9 @@ class Sleuth
   end
   
   
-  
   # Dig up the Person Facet from the Gray Lady...
   def search_nytimes_tags(first_name, last_name)
-    safe_request do
+    safe_request('times tags') do
       url = "#{TIMES_TAGS}&api-key=#{SECRETS['times_tags']}&query=#{first_name} #{last_name}"
       result = get_json(url)['results'].first
       facet = result ? result.sub(/\s*\(Per\)\Z/, '').upcase : nil
@@ -125,7 +126,7 @@ class Sleuth
   # urls that are invalid from the viewpoint of Ruby's URI class. We work around
   # URI.parse by using a raw Net::HTTP request instead of RestClient.
   def search_nytimes_articles(facet)
-    safe_request(:ensure => facet) do
+    safe_request('times articles', :ensure => facet) do
       url = "#{TIMES_ARTICLES}&api-key=#{SECRETS['times_articles']}&query=per_facet:[#{facet}]"
       results = get_json(url)['results']
       {'nytimes_articles' => results}
@@ -136,10 +137,12 @@ class Sleuth
   # Dig up the top 5 words in speeches by the politician over the course of the
   # last year.
   def search_capitol_words(bioguide_id)
-    now, past = Time.now, Time.now - ONE_YEAR_IN_SECONDS
-    url = [CAPITOL_WORDS, bioguide_id, past.year, past.month, past.day, 
-           now.year, now.month, now.day, 'top5.json'].join('/')
-    {'capitol_words' => get_json(url) }
+    safe_request('capitol words') do
+      now, past = Time.now, Time.now - ONE_YEAR_IN_SECONDS
+      url = [CAPITOL_WORDS, bioguide_id, past.year, past.month, past.day, 
+             now.year, now.month, now.day, 'top5.json'].join('/')
+      {'capitol_words' => get_json(url) }
+    end
   end
   
   
@@ -176,13 +179,18 @@ class Sleuth
   
   
   # Ensure that a failed api call doesn't screw up the remainder of our data.
-  def safe_request(opts={})
-    return {} if opts.has_key?(:ensure) && !opts[:ensure]
+  def safe_request(title, opts={})
+    puts "starting: #{title}"
+    result = {}
+    return result if opts.has_key?(:ensure) && !opts[:ensure]
     begin
-      yield
+      result = yield
+      puts "done with: #{title}"
     rescue RestClient::Exception => e
-      {}
+      result = {}
+      puts "error for: #{title} ... #{e}"
     end
+    result
   end
   
 end
