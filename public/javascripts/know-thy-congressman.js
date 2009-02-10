@@ -130,7 +130,7 @@ KTC = {
     PARTY_COLORS : {
       'Republican' : '#f58980', 
       'Democrat'   : '#00e9f5', 
-      'Other'      : '#f5e900'
+      'Other'      : '#70f579'
     },
     
     MONTH_MAP : {
@@ -280,6 +280,7 @@ KTC = {
     
     // Convert a name to standard firstName_lastName form.
     mungeName : function(name) {
+      name = KTC.Util.removeAccents(name);
       if (name.match(/,/)) name = name.split(/,\s*/).reverse().join(' ');
       name = name.replace(/(^\W*|\W*$)/g, '').split(/\W/);
       return name[0] + '_' + name[name.length-1];
@@ -385,6 +386,11 @@ KTC = {
   // Utility functions
   Util : {
     
+    // Unicode letters to remove for searches.
+    UNICODE_TO_REPLACE : [['\u00E9', 'e'], ['\u00E1', 'a'], ['\u00F3', 'o'], 
+         ['\u00ED', 'i'], ['\u00FA', 'u'], ['\u00FC', 'u'], ['\u00F1', 'n']],
+    
+    
     // Sort an array numerically (default in javascript is alphabetically)
     arraySort : function(arr) {
       return arr.slice().sort(function(a,b){ return b - a; });
@@ -400,6 +406,15 @@ KTC = {
     // minimum value onto a desired maximum and minimum range.
     computeScalingFactor : function(desiredMax, desiredMin, actualMax, actualMin) {
       return (desiredMax - desiredMin) / (actualMax - actualMin);
+    },
+    
+    
+    // Get rid of any Spanish-language unicode accents for ASCII lookups.
+    removeAccents : function(string) {
+      $.each(this.UNICODE_TO_REPLACE, function(i, pair) {
+        string = string.replace(new RegExp(pair[0], 'gi'), pair[1]);
+      });
+      return string;
     },
     
     
@@ -450,7 +465,7 @@ KTC = {
     },
     
     
-    // Debugging function for quickly reloading the CSS on the page sans-refresh.
+    // Utility function for quickly reloading the CSS on the page sans-refresh.
     reloadCss : function(){
       var process = function(win) {
         var links = win.document.getElementsByTagName('link');

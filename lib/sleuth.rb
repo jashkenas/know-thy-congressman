@@ -8,7 +8,7 @@ class Sleuth
   WATCHDOG       = 'watchdog.net'
   SUNLIGHT       = 'services.sunlightlabs.com/api'
   OPENSECRETS    = 'www.opensecrets.org/api/?output=json'
-  FLICKR         = 'api.flickr.com/services/rest?method=flickr.photos.search&format=json&nojsoncallback=1?sort=relevance?perpage=10?extras=owner_name'
+  FLICKR         = 'api.flickr.com/services/rest?method=flickr.photos.search&format=json&nojsoncallback=1?sort=relevance?per_page=10?extras=owner_name'
   TIMES_TAGS     = 'api.nytimes.com/svc/timestags/suggest?filter=(Per)'
   TIMES_ARTICLES = 'api.nytimes.com/svc/search/v1/article?fields=title,url,body,date'
   CAPITOL_WORDS  = 'www.capitolwords.org/api/lawmaker'
