@@ -1,20 +1,19 @@
 /*----- COLORS ------
 Dark:         #383435
-Yellow:       #f5e900
-LightYellow:  #f8ef96
 White:        #f4f6f5
-Blue?:        #00e9f5
-Pink?:        #c34642   From GOP.gov's seal
+Border:       #b0b8b0
+Dem:          #00e9f5
+Rep:          #f58980
+Indy:         #80d68a
 -------------------*/
 
 #ktc.politician {
-  border: 1px solid #b0b8b0;
   color: #383435;
   font-weight: bold;
   font-family: Arial, sans-serif;
   position: absolute;
-  width: 795px;
-  height: 1540px;
+  width: 895px;
+  height: 1260px;
   z-index: 1000;
   text-align: left;
 }
@@ -22,8 +21,8 @@ Pink?:        #c34642   From GOP.gov's seal
 #ktc a img { border: none; }
 #ktc .ktc_inner {
   position: relative;
-  height: 1540px;
-  margin: 20px 10px 20px 20px;
+  height: 1160px;
+  margin: 70px 60px 70px 70px;
 }
   #ktc .backer {
     background: #f4f6f5;
@@ -121,11 +120,15 @@ Pink?:        #c34642   From GOP.gov's seal
 }
 #ktc .block.n_bills_introduced .answer {
   line-height: 48px;
-  font-size: 55px;
+  font-size: 53px;
 }
 #ktc .block.n_bills_debated .answer {
-  line-height: 63px;
-  font-size: 75px;
+  line-height: 57px;
+  font-size: 66px;
+}
+#ktc .block.n_bills_enacted .answer {
+  line-height: 66px;
+  font-size: 80px;
 }
 #ktc .block.table {
   height: 135px;
@@ -153,7 +156,7 @@ Pink?:        #c34642   From GOP.gov's seal
     border: 2px solid #B0B8B0;
   }
 #ktc .block.articles .answer {
-  margin-top: 8px;
+  margin-top: 10px;
 }
   #ktc a.nytimes_article {
     display: block;

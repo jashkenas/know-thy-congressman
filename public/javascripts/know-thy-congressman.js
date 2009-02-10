@@ -86,20 +86,20 @@ KTC = {
   Politician : {
     
     INFO_TO_DISPLAY : [
-      ['requested_earmarks',  'Earmarks Requested',           ''],
-      ['received_earmarks',   'Earmarks Received',            ''],
-      ['maverickometer',      "Maverick-O-Meter",             ''],
-      ['born',                'Born',                         'double'],
-      ['speeches',            'Average Words per Speech',     ''],
-      ['education',           'Education',                    'xsmall triple open'],
       ['n_bills_cosponsored', 'Bills Co-Sponsored',           'short xbig thin'],
       ['n_bills_introduced',  'Bills Introduced',             'short xbig thin'],
       ['n_bills_debated',     'Bills Debated',                'short xbig thin'],
-      ['n_bills_enacted',     'Bills Enacted',                'short xbig'],
-      ['photographs',         'Photographs',                  'triple'],
+      ['n_bills_enacted',     'Bills Enacted',                'short xbig thin'],
+      ['born',                'Born',                         'double'],
+      ['speeches',            'Average Words per Speech',     ''],
+      ['requested_earmarks',  'Earmarks Requested',           ''],
+      ['received_earmarks',   'Earmarks Received',            ''],
+      ['maverickometer',      "Maverick-O-Meter",             ''],
+      ['education',           'Education',                    'xsmall triple open'],
       ['industry_support',    'Top 5 Groups',                 'half table'],
       ['institution_support', 'Top 5 Institutions',           'half table'],
-      ['words',               'Top Words',                    'triple'],
+      ['words',               'Most Used Words',              'triple'],
+      ['photographs',         'Photographs',                  'triple'],
       ['articles',            'Recent NYTimes Articles',      'triple open']
     ],
     
@@ -130,7 +130,7 @@ KTC = {
     PARTY_COLORS : {
       'Republican' : '#f58980', 
       'Democrat'   : '#00e9f5', 
-      'Other'      : '#70f579'
+      'Other'      : '#80d68a'
     },
     
     MONTH_MAP : {
@@ -149,6 +149,8 @@ KTC = {
     
     UNKNOWN : '--',
     
+    BACKGROUND_URL : KTC_ROOT + '/images/backer.png',
+        
     // TODO: Remove the default
     DEFAULT_POLITICIAN : 'Clinton, Hillary',
     
@@ -217,7 +219,7 @@ KTC = {
       for (var i=0; i<this.TOP_N_ARTICLES; i++) {
         var art = data.nytimes_articles[i];
         art.date = KTC.Politician.mungeDate(art.date);
-        art.body = KTC.Util.truncate(art.body, 135);
+        art.body = KTC.Util.truncate(art.body, 132);
         html += KTC.templates.article(art);
       }
       return html;
@@ -309,6 +311,7 @@ KTC = {
       $('body').append(html);
       this.element = $('#ktc');
       KTC.Util.alignElement(this.element[0], 'offscreen');
+      this.element.css({'background-image' : 'url(' + this.BACKGROUND_URL + ')'});
       $.each(this.INFO_TO_DISPLAY, function(){ KTC.Politician.renderBlock(this, data); });
       $.each(this.CANVASES_TO_DRAW, function(){ KTC.Grapher.visualize(this, data); });
       this.renderPhotographs(data);
@@ -351,7 +354,7 @@ KTC = {
       var canvas = $('#' + meta.id);
       var top = toPrecede.offset().top - firstBlock.offset().top;
       var left = toPrecede.offset().left - firstBlock.offset().left;
-      var yOff = meta.before == 'words' ? 6 : 3;
+      var yOff = meta.before == 'n_bills_cosponsored' ? 3 : 6;
       canvas.css({'margin-top' : top + yOff, 'margin-left' : left});
       canvas = canvas.find('canvas');
       var width = meta.width; var height = meta.height;
