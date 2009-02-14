@@ -250,6 +250,7 @@ KTC = {
         word.klass = 'word_' + (i + 1);
         data[word.klass] = word.word_count;
         word.font_size = 40 + ((word.word_count - min) * ratio);
+        word.line_height = (100 - word.font_size) * 1.4;
         html += KTC.templates.word(word);
       });
       return html;

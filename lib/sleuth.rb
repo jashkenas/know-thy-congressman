@@ -26,7 +26,7 @@ class Sleuth
     sunlight = Thread.new { sunlight_data = search_sunlight_labs(first_name, last_name) }
     sunlight.join
     merge_data(sunlight_data)
-    first_name, last_name = extract_name_from_congresspedia
+    first_name, last_name = extract_name_from_congresspedia unless sunlight_data.empty?
     bioguide_id = @data['bioguide_id']
     
     watchdog = Thread.new { watchdog_data = search_watchdog(bioguide_id) }
@@ -54,6 +54,7 @@ class Sleuth
       # We need to perform a little weighting ourselves, because Sunlight labs
       # sometimes produces wonky results (try searching for "Bill Young")...
       candidates = get_json(url)['response']['results']
+      return {} if candidates.empty?
       candidates.each do |c|
         cand = c['result']
         cand['score'] += 0.3 if cand['legislator']['firstname'].match(/#{first_name}/i)

@@ -34,6 +34,7 @@ Indy:         #80d68a
     margin: 0;
     position: absolute;
     font-size: 50px;
+    line-height: 58px;
     top: 10px;
   }
   #ktc .what_is {
@@ -96,6 +97,7 @@ Indy:         #80d68a
           text-transform: uppercase;
         }
         #ktc .block .answer {
+          line-height: 35px;
           font-size: 35px;
           margin: 5px 0 0 5px;
         }
@@ -105,7 +107,6 @@ Indy:         #80d68a
           }
           #ktc .block.xsmall .answer {
             font-size: 16px;
-            font-variant: small-caps;
             line-height: 18px;
           }
             #ktc .block small {
@@ -137,6 +138,7 @@ Indy:         #80d68a
     font-size: 14px;
   }
     #ktc .table_row {
+      line-height: 16px;
       position: relative;
       margin-bottom: 3px;
     }
@@ -161,22 +163,21 @@ Indy:         #80d68a
   #ktc a.nytimes_article {
     display: block;
     text-decoration: none;
-    font-family: Georgia, "Times New Roman", Times, serif;
-    font-size: 12px;
+    font-size: 13px;
     margin-bottom: 8px;
+    line-height: 14px;
     color: #383435;
   }
     #ktc a.nytimes_article .article_title {
-      color: #004276;
     }
       #ktc a.nytimes_article .article_title:hover {
         text-decoration: underline;
       }
     #ktc a.nytimes_article .article_body {
       display: block;
-      color: #777;
+      color: #545456;
       font-weight: normal;
-      font-size: 12px;
+      font-size: 11px;
       height: 16px;
       overflow: hidden;
     }
@@ -190,3 +191,8 @@ Indy:         #80d68a
     line-height: 16px;
     margin-top: 4px;
   }
+    #ktc .words .capitol_word small {
+      display: block;
+      margin-top: 4px;
+      line-height: 10px;
+    }
