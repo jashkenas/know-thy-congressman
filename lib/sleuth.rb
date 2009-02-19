@@ -19,14 +19,14 @@ class Sleuth
   # Dig up all the dirt available about a congressman...
   def dig_up_dirt(first_name, last_name)
     @data = {}
-    first_name.downcase! and last_name.downcase!
     sunlight_data, watchdog_data, flickr_data, contributor_data, industry_data, tags_data, articles_data, words_data = 
       {}, {}, {}, {}, {}, {}, {}, {}
       
     sunlight = Thread.new { sunlight_data = search_sunlight_labs(first_name, last_name) }
     sunlight.join
     merge_data(sunlight_data)
-    first_name, last_name = extract_name_from_congresspedia unless sunlight_data.empty?
+    raise "Couldn't find politican on Sunlight Labs API" if sunlight_data.empty?
+    first_name, last_name = extract_name_from_congresspedia
     bioguide_id = @data['bioguide_id']
     
     watchdog = Thread.new { watchdog_data = search_watchdog(bioguide_id) }

@@ -8,6 +8,7 @@ Indy:         #80d68a
 -------------------*/
 
 #ktc.politician {
+  cursor: move;
   color: #383435;
   font-weight: bold;
   font-family: Arial, sans-serif;
@@ -17,8 +18,22 @@ Indy:         #80d68a
   z-index: 1000;
   text-align: left;
 }
-#ktc a { border: none; }
-#ktc a img { border: none; }
+
+#ktc a { 
+  border: none;
+  color: #383435;
+  text-decoration: none;
+}
+  #ktc a:hover {
+    text-decoration: underline;
+  }
+  #ktc a:visited {
+    color: #383435;
+  }
+  #ktc a img { 
+    border: none; 
+  }
+  
 #ktc .ktc_inner {
   position: relative;
   height: 1160px;
@@ -46,9 +61,21 @@ Indy:         #80d68a
   #ktc .portrait {
     border: 1px solid #b0b8b0;
     position: absolute;
-    right: 10px; top: 0px;
+    right: 11px; top: 0px;
     height: 175px;
   }
+  #ktc .contact_info {
+    position: absolute;
+    top: 70px; left: 2px;
+  }
+    #ktc .contact_item {
+      text-transform: uppercase;
+      font: 11px Arial;
+      line-height: 18px;
+      padding-left: 17px;
+      background-repeat: no-repeat;
+      background-position: 0px 2px;
+    }
   #ktc .ktc_content {
     position: relative;
     z-index: 5;
@@ -98,7 +125,7 @@ Indy:         #80d68a
         }
         #ktc .block .answer {
           line-height: 35px;
-          font-size: 35px;
+          font-size: 30px;
           margin: 5px 0 0 5px;
         }
           #ktc .block.xbig .answer {
@@ -106,7 +133,7 @@ Indy:         #80d68a
             font-size: 70px;
           }
           #ktc .block.xsmall .answer {
-            font-size: 16px;
+            font-size: 14px;
             line-height: 18px;
           }
             #ktc .block small {
@@ -157,27 +184,31 @@ Indy:         #80d68a
     font-size: 0px;
     border: 2px solid #B0B8B0;
   }
+    #ktc .block.photographs .photograph:hover {
+      border: 2px solid #383435;
+    }
 #ktc .block.articles .answer {
   margin-top: 10px;
 }
-  #ktc a.nytimes_article {
+  #ktc .nytimes_article {
     display: block;
-    text-decoration: none;
     font-size: 13px;
     margin-bottom: 8px;
     line-height: 14px;
-    color: #383435;
   }
-    #ktc a.nytimes_article .article_title {
+    #ktc .nytimes_article .article_title {
+      color: #383435;
+      text-decoration: none;
     }
-      #ktc a.nytimes_article .article_title:hover {
+      #ktc .nytimes_article .article_title:hover {
         text-decoration: underline;
       }
-    #ktc a.nytimes_article .article_body {
+    #ktc .nytimes_article .article_body {
       display: block;
       color: #545456;
       font-weight: normal;
       font-size: 11px;
+      line-height: 15px;
       height: 16px;
       overflow: hidden;
     }

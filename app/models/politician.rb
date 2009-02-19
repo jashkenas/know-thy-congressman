@@ -11,10 +11,7 @@ class Politician < ActiveRecord::Base
   
   # Go out and re-spider this politician.
   def gather_information
-    info = Sleuth.new.dig_up_dirt(first_name, last_name)
-    self.first_name = info['firstname']
-    self.last_name  = info['lastname']
-    self.json       = info.to_json
+    self.json = Sleuth.new.dig_up_dirt(first_name, last_name).to_json
     save
   end
   

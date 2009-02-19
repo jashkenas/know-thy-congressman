@@ -3,8 +3,14 @@
     <div class="backer"></div>
     <div class="ktc_content">
       <div class="big_name"><%= name %></div>
-      <div class="what_is"><%= party_affiliation %> <%= kind_of_congressman %></div>
+      <div class="what_is">
+        <%= party_affiliation %>
+        <%= kind_of_congressman %>
+        /
+        <%= state %>
+      </div>
       <img class="portrait" src="http://watchdog.net<%= photo_path %>" />
+      <div class="contact_info"><!-- Render target --></div>
       <div class="blocks">
         <!-- Render target for all the blocks -->
       </div>

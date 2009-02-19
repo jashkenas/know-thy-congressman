@@ -8,7 +8,7 @@ KTC = {
       
       this.urls = {
         stylesheet : KTC_ROOT + '/stylesheets/know-thy-congressman.css',
-        jquery     : 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.1/jquery.min.js',
+        jquery     : KTC_ROOT + '/javascripts/packed/jquery.js',
         jqueryDrag : KTC_ROOT + '/javascripts/packed/jquery_draggable.js',
         processing : KTC_ROOT + '/javascripts/packed/processing.js',
         typeface   : KTC_ROOT + '/javascripts/typeface.js',
@@ -184,16 +184,19 @@ KTC = {
       data.party_affiliation = (data.party == "Democrat") ? "Democratic" : data.party;
       data.kind_of_congressman = this.KIND_OF_CONGRESSMAN_MAP[data.title];
       data.name = data.firstname + " " + data.lastname;
+      data.titled_name = data.kind_of_congressman + " " + data.lastname;
       data.requested_earmarks = KTC.Util.friendlyMoney(data.amt_earmark_requested);
       data.received_earmarks = this.mungeReceivedEarmarks(data);
       data.born = (KTC.Util.truncate(data.birthplace, 20) || this.UNKNOWN) + ' <small>(' + this.mungeDate(data.birthday) + ")</span>";
       data.education = this.mungeEducation(data.education);
-      data.maverickometer = data.predictability ? ((1 - data.predictability) * 100).numberFormat("0.0") + '%' : this.UNKNOWN;
+      data.maverickometer = (data.predictability ? ((1 - data.predictability) * 100).numberFormat("0.0") + '%' : this.UNKNOWN) + " <small>(measures unpredictability)</small>";
       data.speeches = data.words_per_speech ? data.words_per_speech + " <small>(spoke " + data.n_speeches + " times)</small>" : this.UNKNOWN;
       data.industry_support = this.mungeTable(data, 'opensecrets_industries');
       data.institution_support = this.mungeTable(data, 'opensecrets_contributors');
       data.articles = this.mungeArticles(data);
       data.words = this.mungeWords(data);
+      data.wikipedia = this.mungeWikipedia(data.wikipedia);
+      data.ktc_root = window.KTC_ROOT;
       return data;
     },
     
@@ -215,11 +218,12 @@ KTC = {
     // Create a list of NYTimes Articles about the politician.
     mungeArticles : function(data) {
       var html = '';
-      if (!data.nytimes_articles || data.nytimes_articles.length <= 0) return this.UNKNOWN;
-      for (var i=0; i<this.TOP_N_ARTICLES; i++) {
+      if (!data.nytimes_articles) return this.UNKNOWN;
+      var upto = KTC.Util.arrayMin([this.TOP_N_ARTICLES, data.nytimes_articles.length]);
+      for (var i=0; i<upto; i++) {
         var art = data.nytimes_articles[i];
         art.date = KTC.Politician.mungeDate(art.date);
-        art.body = KTC.Util.truncate(art.body, 132);
+        art.body = KTC.Util.truncate(art.body, 140);
         html += KTC.templates.article(art);
       }
       return html;
@@ -249,8 +253,10 @@ KTC = {
       $.each(data.capitol_words, function(i, word) { 
         word.klass = 'word_' + (i + 1);
         data[word.klass] = word.word_count;
-        word.font_size = 40 + ((word.word_count - min) * ratio);
-        word.line_height = (100 - word.font_size) * 1.4;
+        word.name = data.name;
+        word.bioguide_id = data.bioguide_id;
+        word.font_size = 45 + ((word.word_count - min) * ratio);
+        word.line_height = (110 - word.font_size) * 1.4;
         html += KTC.templates.word(word);
       });
       return html;
@@ -290,6 +296,12 @@ KTC = {
     },
     
     
+    // Safely fix the corrupted wikipedia urls that we seem to be getting.
+    mungeWikipedia : function(url) {
+      return url ? url.replace(/\.org\/\//g, '.org/') : '';
+    },
+    
+    
     // After the politician's data has loaded, we can really get started.
     // Munge the data as needed.
     loaded : function(data) {
@@ -315,7 +327,15 @@ KTC = {
       this.element.css({'background-image' : 'url(' + this.BACKGROUND_URL + ')'});
       $.each(this.INFO_TO_DISPLAY, function(){ KTC.Politician.renderBlock(this, data); });
       $.each(this.CANVASES_TO_DRAW, function(){ KTC.Grapher.visualize(this, data); });
+      this.renderContactInfo(data);
       this.renderPhotographs(data);
+    },
+    
+    
+    // Render the block of contact/lookup information for the congressman.
+    renderContactInfo : function(data) {
+      var html = KTC.templates.contact(data);
+      this.element.find('.contact_info').append(html);
     },
     
     
