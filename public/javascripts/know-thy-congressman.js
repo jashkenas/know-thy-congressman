@@ -235,8 +235,11 @@ KTC = {
     mungeEducation : function(edu) {
       if (!edu) return this.UNKNOWN;
       var degrees = [];
-      $.each(edu.replace(/\.$/, '').split(/\W*\n\W*/), function() {
-        if (!this.match(/honorary/i)) degrees.push(this);
+      $.each(edu.replace(/\.$/, '').split(/\W*\n\W*/), function(i, deg) {
+        var date = deg.match(/\d+$/);
+        deg = deg.replace(/,\s*\d+$/, '');
+        deg += " <small>(" + date.toString() + ")</small>";
+        if (!deg.match(/honorary/i)) degrees.push(deg);
       });
       return degrees.join("<br />");
     },
