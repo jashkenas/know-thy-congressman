@@ -336,6 +336,7 @@ KTC = {
       if (console && console.log) console.log(data);
       $('#ktc').remove();
       this.render(data);
+      $('#ktc .closer').bind('click', function(){ KTC.Politician.element.fadeOut('slow'); });
       this.element.draggable();
       KTC.Util.alignElement(this.element[0]);
       this.element.hide();
