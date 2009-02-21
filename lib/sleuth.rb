@@ -26,12 +26,12 @@ class Sleuth
     sunlight.join
     merge_data(sunlight_data)
     raise "Couldn't find politican on Sunlight Labs API" if sunlight_data.empty?
-    first_name, last_name = extract_name_from_congresspedia
+    first_name, middle_initial, last_name = extract_name_from_congresspedia
     bioguide_id = @data['bioguide_id']
-    
+        
     watchdog = Thread.new { watchdog_data = search_watchdog(bioguide_id) }
     flickr   = Thread.new { flickr_data   = search_flickr(first_name, last_name) }
-    tags     = Thread.new { tags_data     = search_nytimes_tags(first_name, last_name) }
+    tags     = Thread.new { tags_data     = search_nytimes_tags(first_name, middle_initial, last_name) }
     words    = Thread.new { words_data    = search_capitol_words(bioguide_id) }
     
     watchdog.join and tags.join
@@ -111,9 +111,9 @@ class Sleuth
   
   
   # Dig up the Person Facet from the Gray Lady...
-  def search_nytimes_tags(first_name, last_name)
+  def search_nytimes_tags(first_name, middle_initial, last_name)
     safe_request('times tags') do
-      url = "#{TIMES_TAGS}&api-key=#{SECRETS['times_tags']}&query=#{first_name} #{last_name}"
+      url = "#{TIMES_TAGS}&api-key=#{SECRETS['times_tags']}&query=#{first_name} #{middle_initial} #{last_name}"
       result = get_json(url)['results'].first
       facet = result ? result.sub(/\s*\(Per\)\Z/, '').upcase : nil
       {'person_facet' => facet}
@@ -175,7 +175,8 @@ class Sleuth
     name  = @data['congresspedia_url'].match(/title=(\w+)\Z/)[1].split('_')
     first = @data['firstname'] = name[0]
     last  = @data['lastname']  = name[-1]
-    return first, last
+    mid   = @data['middlename'].first
+    return first, mid, last
   end
   
   
