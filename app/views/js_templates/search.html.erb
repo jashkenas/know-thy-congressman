@@ -1,5 +1,13 @@
-<div id="ktc" class="search" style="background-image: url(<%= KTC_ROOT %>/images/search_backer.png);">
-  <img src="<%= KTC_ROOT %>/images/spinner.gif" alt="" />
-  <div class="searching_for">searching for:</div>
-  <div class="search_text">"<%= text %>"</div>
+<div id="ktc" class="search <%= className %>" style="background-image: url(<%= KTC_ROOT %>/images/search_backer.png);">
+  <div class="search_inner">
+    <div id="ktc_closer" class="closer" style="background-image:url(<%= KTC_ROOT %>/images/closer.png)"> </div>
+    <img src="<%= KTC_ROOT %>/images/spinner.gif" alt="" />
+    <div class="searching_for">searching for:</div>
+    <div class="search_for">search for:</div>
+    <div class="search_text">"<%= text %>"</div>
+    <div class="search_input">
+      <input id="ktc_search_input" type="text" value="" />
+      <input id="ktc_search_button" type="submit" value="GO" />
+    </div>
+  </div>
 </div>

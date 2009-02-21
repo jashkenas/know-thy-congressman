@@ -15,11 +15,13 @@ KTC = {
         politician : KTC.Util.createTemplate(KTC_ROOT + '/find/<%= name %>.js?callback=<%= callback %>')
       };    
       
-      this.loadJavascript(this.urls.templates, this.showSpinner);
+      this.loadJavascript(this.urls.templates, function() {
+        KTC.Loader.showSearch(KTC.Politician.getSelectedText());
+      });
       this.loadStylesheet(this.urls.stylesheet);
       this.loadJavascript(this.urls.jquery, function() {
         KTC.Loader.loadJavascript(KTC.Loader.urls.jqueryDrag);
-        KTC.Politician.run(true); 
+        KTC.Politician.run(); 
       });
       this.loadJavascript(this.urls.numbers);
     },
@@ -27,13 +29,18 @@ KTC = {
     
     // Show the loading spinner, while we go and fetch the data...
     // No javascript libraries or anything will have loaded by this point.
-    showSpinner : function() {
-      var spin = document.getElementById('ktc');
-      if (spin) spin.parentNode.removeChild(spin);
-      var text = KTC.Politician.searchText = KTC.Politician.getSelectedText();
-      document.body.innerHTML += KTC.templates.search({text : text});
-      var spin = document.getElementById('ktc');
-      KTC.Util.alignElement(spin);
+    showSearch : function(text) {
+      var ktc = document.getElementById('ktc');
+      if (ktc) ktc.parentNode.removeChild(ktc);
+      text = KTC.Politician.searchText = text || KTC.Politician.searchText;
+      var className = text ? 'searching' : 'asking';
+      document.body.innerHTML += KTC.templates.search({text : text, className : className});
+      var ktc = document.getElementById('ktc');
+      document.getElementById('ktc_search_button').onclick = KTC.Politician.run;
+      document.getElementById('ktc_closer').onclick = function() {
+        ktc.parentNode.removeChild(ktc);
+      };
+      KTC.Util.alignElement(ktc);
     },
     
     
@@ -156,23 +163,25 @@ KTC = {
     
     BACKGROUND_URL : KTC_ROOT + '/images/backer.png',
         
-    // TODO: Remove the default
-    DEFAULT_POLITICIAN : 'Clinton, Hillary',
-    
     
     // Get started by searching for politician on the server
-    run : function(ignoreSpinner) {
-      if (!ignoreSpinner) KTC.Loader.showSpinner();
-      this.searchFor(this.searchText || this.getSelectedText());      
+    run : function() {
+      var text = KTC.Politician.searchText || KTC.Politician.getSelectedText();
+      KTC.Loader.showSearch(text);
+      KTC.Politician.searchFor(text);
+      KTC.Politician.searchText = null;    
     },
     
     
     // Get the selected text from the document.
+    // May need to call this before JQuery loads.
     getSelectedText : function() {
-      var text = window.getSelection ? window.getSelection().toString() : 
-                 document.getSelection ? document.getSelection().toString() :
-                 document.selection ? document.selection.createRange().text : '';
-      return text || this.DEFAULT_POLITICIAN;
+      var input = document.getElementById('ktc_search_input');
+      var text = input && input.value ? input.value : '';
+      if (!text) text = window.getSelection ? window.getSelection().toString() : 
+                        document.getSelection ? document.getSelection().toString() :
+                        document.selection ? document.selection.createRange().text : '';
+      return text;
     },
     
     
@@ -314,10 +323,12 @@ KTC = {
     // After the politician's data has loaded, we can really get started.
     // Munge the data as needed.
     loaded : function(data) {
+      var ktc = $('#ktc');
+      if (ktc.length == 0) return;        // Bail if they've closed the window.
       data = window.eval("("+data+")");
       data = this.mungeData(data);
       if (console && console.log) console.log(data);
-      $('#ktc').remove();
+      ktc.remove();
       this.render(data);
       $('#ktc .closer').bind('click', function(){ KTC.Politician.element.fadeOut(); });
       this.element.draggable();

@@ -25,26 +25,51 @@ Indy:         #80d68a
 /* --- First off, the search box --- */
 #ktc.search {
   position: absolute;
-  width: 280px; height: 50px;
-  margin: 0; padding: 50px;
+  width: 300px; height: 70px;
+  margin: 0; padding: 40px;
   font: bold 16px "Helvetica Neue", Arial, sans-serif;
   color: #383435;
 }
-  #ktc.search img {
-    position: absolute;
-    top: 50px; right: 50px;
+  #ktc .search_inner {
+    padding: 10px;
+    width: 280px;
+    height: 48px;
+    background: #f4f6f5;
   }
-  #ktc.search .searching_for {
-    font-size: 11px;
-    font-weight: normal;
-    text-transform: uppercase;
-    line-height: 16px;
-  }
-  #ktc.search .search_text {
-    margin: 7px 0 0 0;
-    height: 20px;
-    overflow: hidden;
-  }
+    #ktc.search .closer {
+      top: 23px; left: 23px;
+    }
+    #ktc.search img {
+      display: none;
+      position: absolute;
+      top: 50px; right: 50px;
+    }
+    #ktc.search .searching_for, #ktc.search .search_for {
+      display: none;
+      font-size: 11px;
+      font-weight: normal;
+      text-transform: uppercase;
+      line-height: 16px;
+    }
+    #ktc.search .search_text, #ktc.search .search_input {
+      display: none;
+      margin: 7px 0 0 0;
+      height: 22px;
+      overflow: hidden;
+    }
+      #ktc.search #ktc_search_input {
+        width: 228px;
+      }
+      #ktc.search #ktc_search_button {
+        position: absolute;
+        font-size: 9px;
+        margin: 1px 0 0 10px;
+      }
+      #ktc.search.searching .searching_for, #ktc.search.searching .search_text,
+      #ktc.search.asking .search_for, #ktc.search.asking .search_input,
+      #ktc.search.searching img { 
+        display: block; 
+      }
 
 /* --- Now the real politician page --- */
 #ktc.politician {
