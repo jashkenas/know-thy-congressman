@@ -54,16 +54,23 @@ Indy:         #80d68a
     #ktc.search .search_text, #ktc.search .search_input {
       display: none;
       margin: 7px 0 0 0;
-      height: 22px;
+      height: 20px;
       overflow: hidden;
     }
+      #ktc.search.asking .search_input {
+        margin-top: 0px;
+        height: 30px;
+      }
       #ktc.search #ktc_search_input {
         width: 228px;
+        font: bold 16px "Helvetica Neue", Arial, sans-serif;
+        color: #383435;
+        outline: none;
       }
       #ktc.search #ktc_search_button {
         position: absolute;
         font-size: 9px;
-        margin: 1px 0 0 10px;
+        margin: 6px 0 0 10px;
       }
       #ktc.search.searching .searching_for, #ktc.search.searching .search_text,
       #ktc.search.asking .search_for, #ktc.search.asking .search_input,

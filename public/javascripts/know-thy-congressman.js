@@ -3,6 +3,9 @@ KTC = {
   // Loader for loading up 'em scripts
   Loader : {
     
+    // The key code of the return key is 13...
+    RETURN_KEY : 13,
+    
     // Get started by loading in the Google AJAX API, and JQuery...
     initialize : function() {
       
@@ -20,6 +23,7 @@ KTC = {
       });
       this.loadStylesheet(this.urls.stylesheet);
       this.loadJavascript(this.urls.jquery, function() {
+        KTC.Loader.attachLiveFunctions();
         KTC.Loader.loadJavascript(KTC.Loader.urls.jqueryDrag);
         KTC.Politician.run(); 
       });
@@ -34,13 +38,19 @@ KTC = {
       if (ktc) ktc.parentNode.removeChild(ktc);
       text = KTC.Politician.searchText = text || KTC.Politician.searchText;
       var className = text ? 'searching' : 'asking';
-      document.body.innerHTML += KTC.templates.search({text : text, className : className});
-      var ktc = document.getElementById('ktc');
-      document.getElementById('ktc_search_button').onclick = KTC.Politician.run;
-      document.getElementById('ktc_closer').onclick = function() {
-        ktc.parentNode.removeChild(ktc);
-      };
-      KTC.Util.alignElement(ktc);
+      document.body.innerHTML += KTC.templates.search({text : text, className : className});      
+      KTC.Util.alignElement(document.getElementById('ktc'));
+      document.getElementById('ktc_search_input').focus();
+    },
+    
+    
+    // Attach all the "live" functions that we want hooked up to the UI.
+    attachLiveFunctions : function() {
+      $('#ktc_search_button').live('click', KTC.Politician.run);
+      $('#ktc .closer').live('click', function() { $('#ktc').fadeOut(); });
+      $('#ktc_search_input').live('keypress', function(e) {
+        if (e.which == KTC.Loader.RETURN_KEY) KTC.Politician.run();
+      });
     },
     
     
@@ -330,7 +340,6 @@ KTC = {
       if (console && console.log) console.log(data);
       ktc.remove();
       this.render(data);
-      $('#ktc .closer').bind('click', function(){ KTC.Politician.element.fadeOut(); });
       this.element.draggable();
       KTC.Util.alignElement(this.element[0]);
       this.element.hide();
