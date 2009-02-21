@@ -74,7 +74,11 @@ Indy:         #80d68a
     position: absolute;
     cursor: pointer;
     top: -15px; left: -15px;
+    background-position: 0px -30px;
   }
+    #ktc .closer:hover {
+      background-position: 0 0;
+    }
   #ktc .big_name {
     margin: 0;
     position: absolute;
