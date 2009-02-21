@@ -26,12 +26,12 @@ class Sleuth
     sunlight.join
     merge_data(sunlight_data)
     raise "Couldn't find politican on Sunlight Labs API" if sunlight_data.empty?
-    first_name, middle_initial, last_name = extract_name_from_congresspedia
+    first_name, last_name, query_name = extract_name_from_congresspedia
     bioguide_id = @data['bioguide_id']
-        
+            
     watchdog = Thread.new { watchdog_data = search_watchdog(bioguide_id) }
     flickr   = Thread.new { flickr_data   = search_flickr(first_name, last_name) }
-    tags     = Thread.new { tags_data     = search_nytimes_tags(first_name, middle_initial, last_name) }
+    tags     = Thread.new { tags_data     = search_nytimes_tags(query_name) }
     words    = Thread.new { words_data    = search_capitol_words(bioguide_id) }
     
     watchdog.join and tags.join
@@ -111,9 +111,9 @@ class Sleuth
   
   
   # Dig up the Person Facet from the Gray Lady...
-  def search_nytimes_tags(first_name, middle_initial, last_name)
+  def search_nytimes_tags(query_name)
     safe_request('times tags') do
-      url = "#{TIMES_TAGS}&api-key=#{SECRETS['times_tags']}&query=#{first_name} #{middle_initial} #{last_name}"
+      url = "#{TIMES_TAGS}&api-key=#{SECRETS['times_tags']}&query=#{query_name}"
       result = get_json(url)['results'].first
       facet = result ? result.sub(/\s*\(Per\)\Z/, '').upcase : nil
       {'person_facet' => facet}
@@ -153,7 +153,7 @@ class Sleuth
   def get_json(url)
     begin
       JSON.parse(RestClient.get(URI.encode(url)))
-    rescue JSON::ParserError => e                 # Faux-log any failed requests.
+    rescue JSON::ParserError => e # Faux-log any failed requests.
       @data['failed_requests'] ||= []
       @data['failed_requests'] <<  url
       {}
@@ -171,12 +171,15 @@ class Sleuth
   # We really need to try to get a valid first name and last name. The sunlight
   # labs API takes care of searching for a congressperson, but sometimes returns
   # names with extra junk (like initials). Use the congresspedia url instead.
+  # However, the sunlight data should return middle names (sometimes in
+  # the wrong fields) that we need for the Times Tags API. So we save it
+  # as the query_name...
   def extract_name_from_congresspedia
+    query = @data['query_name'] = "#{@data['firstname']} #{@data['middlename']} #{@data['lastname']}".squeeze(' ')
     name  = @data['congresspedia_url'].match(/title=(\w+)\Z/)[1].split('_')
     first = @data['firstname'] = name[0]
     last  = @data['lastname']  = name[-1]
-    mid   = @data['middlename'].first
-    return first, mid, last
+    return first, last, query
   end
   
   
