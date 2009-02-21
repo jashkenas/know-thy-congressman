@@ -7,18 +7,6 @@ Rep:          #f58980
 Indy:         #80d68a
 -------------------*/
 
-#ktc.politician {
-  cursor: move;
-  color: #383435;
-  font-weight: bold;
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  position: absolute;
-  width: 895px;
-  height: 1260px;
-  z-index: 1000;
-  text-align: left;
-}
-
 #ktc a { 
   border: none;
   color: #383435;
@@ -34,6 +22,42 @@ Indy:         #80d68a
     border: none; 
   }
   
+/* --- First off, the search box --- */
+#ktc.search {
+  position: absolute;
+  width: 280px; height: 50px;
+  margin: 0; padding: 50px;
+  font: bold 16px "Helvetica Neue", Arial, sans-serif;
+  color: #383435;
+}
+  #ktc.search img {
+    position: absolute;
+    top: 50px; right: 50px;
+  }
+  #ktc.search .searching_for {
+    font-size: 11px;
+    font-weight: normal;
+    text-transform: uppercase;
+    line-height: 16px;
+  }
+  #ktc.search .search_text {
+    margin: 7px 0 0 0;
+    height: 20px;
+    overflow: hidden;
+  }
+
+/* --- Now the real politician page --- */
+#ktc.politician {
+  cursor: move;
+  color: #383435;
+  font-weight: bold;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  position: absolute;
+  width: 895px;
+  height: 1260px;
+  z-index: 1000;
+  text-align: left;
+} 
 #ktc .ktc_inner {
   position: relative;
   height: 1160px;

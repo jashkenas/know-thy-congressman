@@ -10,35 +10,18 @@ KTC = {
         stylesheet : KTC_ROOT + '/stylesheets/know-thy-congressman.css',
         jquery     : KTC_ROOT + '/javascripts/packed/jquery.js',
         jqueryDrag : KTC_ROOT + '/javascripts/packed/jquery_draggable.js',
-        processing : KTC_ROOT + '/javascripts/packed/processing.js',
-        typeface   : KTC_ROOT + '/javascripts/typeface.js',
         numbers    : KTC_ROOT + '/javascripts/numbers.js',
         templates  : KTC_ROOT + '/templates.js',
         politician : KTC.Util.createTemplate(KTC_ROOT + '/find/<%= name %>.js?callback=<%= callback %>')
-      };
+      };    
       
-      this.fonts = {
-        politicaXT        : KTC_ROOT + '/type/politica_xt_regular.typeface.js',
-        politicaXTBoldIT  : KTC_ROOT + '/type/politica_xt_bold_italic.typeface.js'
-      };
-      
-      // Using an inline template so we can display the spinner as rapidly as possible.
-      this.spinner = KTC.Util.createTemplate('\
-      <div id="ktc" style="position:absolute; border: 7px solid #b0b8b0; \
-        font: normal 12px Arial; padding: 8px 34px 8px 8px; background: #f4f6f5;">\
-        SEARCHING FOR: <span style="font-weight: bold;">"<%= text %>"</span>\
-        <img style="position:absolute; right:8px; top:4px;" src="' + KTC_ROOT + '/images/spinner.gif" alt="" />\
-      </div>');
-      
-      this.showSpinner();
-      
+      this.loadJavascript(this.urls.templates, this.showSpinner);
       this.loadStylesheet(this.urls.stylesheet);
       this.loadJavascript(this.urls.jquery, function() {
         KTC.Loader.loadJavascript(KTC.Loader.urls.jqueryDrag);
         KTC.Politician.run(true); 
       });
       this.loadJavascript(this.urls.numbers);
-      this.loadJavascript(this.urls.templates);
     },
     
     
@@ -48,7 +31,7 @@ KTC = {
       var spin = document.getElementById('ktc');
       if (spin) spin.parentNode.removeChild(spin);
       var text = KTC.Politician.searchText = KTC.Politician.getSelectedText();
-      document.body.innerHTML += this.spinner({text : text});
+      document.body.innerHTML += KTC.templates.search({text : text});
       var spin = document.getElementById('ktc');
       KTC.Util.alignElement(spin);
     },
@@ -336,7 +319,7 @@ KTC = {
       if (console && console.log) console.log(data);
       $('#ktc').remove();
       this.render(data);
-      $('#ktc .closer').bind('click', function(){ KTC.Politician.element.fadeOut('slow'); });
+      $('#ktc .closer').bind('click', function(){ KTC.Politician.element.fadeOut(); });
       this.element.draggable();
       KTC.Util.alignElement(this.element[0]);
       this.element.hide();
