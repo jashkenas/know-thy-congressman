@@ -25,7 +25,9 @@ KTC = {
       
       var runnerFunction = function() {
         KTC.Loader.attachLiveFunctions();
-        KTC.Loader.loadJavascript(KTC.Loader.urls.jqueryDrag);
+        KTC.Loader.loadJavascript(KTC.Loader.urls.jqueryDrag, function() {
+          $('#ktc').draggable();
+        });
         KTC.Politician.run();
       };
       
@@ -47,7 +49,8 @@ KTC = {
       if (ktc) ktc.parentNode.removeChild(ktc);
       text = KTC.Politician.searchText = text || KTC.Politician.searchText;
       var className = text ? 'searching' : 'asking';
-      document.body.innerHTML += KTC.templates.search({text : text, className : className});      
+      var html = KTC.templates.searcher({text : text, className : className});
+      document.body.innerHTML += html;      
       KTC.Util.alignElement(document.getElementById('ktc'));
       if (!text) document.getElementById('ktc_search_input').focus();
     },
@@ -286,7 +289,7 @@ KTC = {
       var degrees = [];
       $.each(edu.replace(/\.$/, '').split(/\W*\n\W*/), function(i, deg) {
         var date = deg.match(/\d+$/);
-        deg = deg.replace(/,\s*\d+$/, '');
+        deg = KTC.Util.truncate(deg.replace(/,\s*\d+$/, ''), 95);
         if (date) deg += " <small>(" + date.toString() + ")</small>";
         if (!deg.match(/honorary/i)) degrees.push(deg);
       });
@@ -361,7 +364,7 @@ KTC = {
       if (ktc.length == 0) return;        // Bail if they've closed the window.
       data = window.eval("("+data+")");
       data = this.mungeData(data);
-      if (typeof(console) != 'undefined' && console.log) console.log(data);
+      if ((typeof(console) != 'undefined') && console.log) console.log(data);
       ktc.remove();
       this.render(data);
       this.element.draggable();
@@ -434,7 +437,7 @@ KTC = {
       canvas = canvas.find('canvas');
       var width = meta.width; var height = meta.height;
       var element = canvas.get()[0];
-      if (G_vmlCanvasManager) element = G_vmlCanvasManager.initElement(element);
+      if (window.G_vmlCanvasManager) element = G_vmlCanvasManager.initElement(element);
       var p = element.getContext('2d');
       var colors = KTC.Politician.PARTY_COLORS;
       p.fillStyle = colors[data.party] || colors['Other'];

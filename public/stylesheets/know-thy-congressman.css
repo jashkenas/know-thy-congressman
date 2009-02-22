@@ -27,7 +27,7 @@ Indy:         #80d68a
   position: absolute;
   width: 300px; height: 70px;
   margin: 0; padding: 40px;
-  font: bold 16px "Helvetica Neue", Arial, sans-serif;
+  font: bold 14px "Helvetica Neue", Arial, sans-serif;
   color: #383435;
 }
   #ktc .search_inner {
@@ -55,22 +55,21 @@ Indy:         #80d68a
       display: none;
       margin: 7px 0 0 0;
       height: 20px;
-      overflow: hidden;
     }
       #ktc.search.asking .search_input {
-        margin-top: 0px;
+        margin-top: 3px;
         height: 30px;
       }
       #ktc.search #ktc_search_input {
         width: 228px;
-        font: bold 16px "Helvetica Neue", Arial, sans-serif;
+        font: bold 14px "Helvetica Neue", Arial, sans-serif;
         color: #383435;
         outline: none;
       }
       #ktc.search #ktc_search_button {
         position: absolute;
         font-size: 9px;
-        margin: 6px 0 0 10px;
+        margin: 5px 0 0 10px;
       }
       #ktc.search.searching .searching_for, #ktc.search.searching .search_text,
       #ktc.search.asking .search_for, #ktc.search.asking .search_input,
@@ -258,12 +257,12 @@ Indy:         #80d68a
       border: 2px solid #383435;
     }
 #ktc .block.articles .answer {
-  margin-top: 10px;
+ margin-top: 8px;
 }
   #ktc .nytimes_article {
     display: block;
     font-size: 13px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     line-height: 14px;
   }
     #ktc .nytimes_article .article_title {

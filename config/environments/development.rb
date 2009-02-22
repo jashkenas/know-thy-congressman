@@ -16,4 +16,4 @@ config.action_controller.perform_caching             = false
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
 
-SERVER_ROOT = 'http://192.168.1.104:3000'
+SERVER_ROOT = 'http://192.168.0.20:3000'
