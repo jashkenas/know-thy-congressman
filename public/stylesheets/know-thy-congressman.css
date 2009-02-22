@@ -18,9 +18,9 @@ Indy:         #80d68a
   #ktc a:visited {
     color: #383435;
   }
-  #ktc a img { 
-    border: none; 
-  }
+    #ktc a img { 
+      border: none;
+    }
   
 /* --- First off, the search box --- */
 #ktc.search {
@@ -97,17 +97,23 @@ Indy:         #80d68a
   #ktc .backer {
     background: #f4f6f5;
     position: absolute;
-    top: -20px; right: -10px; left: -20px; bottom: 20px;
+    z-index: -1;
+    top: -20px; left: -20px;
+    overflow: visible;
+    width: 795px;
+    height: 1160px;
     opacity: 0.96;
+    filter: alpha(opacity=96);
   }
-    #ktc .closer {
+  #ktc .closer {
     width: 30px; height: 30px;
     position: absolute;
     cursor: pointer;
-    top: -15px; left: -15px;
+    top: 34px; left: 34px;
     background-position: 0px -30px;
+    z-index: 5;
   }
-    #ktc .closer:hover {
+    #ktc div.closer:hover {
       background-position: 0 0;
     }
   #ktc .big_name {
@@ -145,7 +151,7 @@ Indy:         #80d68a
     }
   #ktc .ktc_content {
     position: relative;
-    z-index: 5;
+    z-index: 3;
   }
   #ktc .blocks {
     padding-top: 197px;
@@ -155,12 +161,13 @@ Indy:         #80d68a
       width: 245px; height: 75px;
       margin-right: 10px;
       float: left;
+      position: relative;
+      z-index: 2;
     }
       #ktc .block.canvas {
-        clear: both;
+        border: 0;
         position: absolute;
-        border-top: 0px;
-        margin-top: 3px;
+        top: 0px; left: 0px;
         z-index: -1;
       }
       #ktc .block.short {

@@ -1,0 +1,17 @@
+#ktc img {
+  -ms-interpolation-mode: bicubic;
+}
+#ktc .search_inner {
+  width: 300px;
+}
+  #ktc.searching .search_inner {
+    padding-bottom: 15px;
+  }
+  #ktc.search #ktc_search_button {
+    margin: 0 0 0 8px;
+    padding: 2px 5px 2px 5px;
+  }
+  
+#ktc .ktc_inner {
+  top: 70px;
+}

@@ -11,6 +11,7 @@ KTC = {
       
       this.urls = {
         stylesheet : KTC_ROOT + '/stylesheets/know-thy-congressman.css',
+        iestyles   : KTC_ROOT + '/stylesheets/iestyles.css',
         jquery     : KTC_ROOT + '/javascripts/packed/jquery.js',
         jqueryDrag : KTC_ROOT + '/javascripts/packed/jquery_draggable.js',
         excanvas   : KTC_ROOT + '/javascripts/packed/excanvas.js',
@@ -34,9 +35,12 @@ KTC = {
       this.loadJavascript(this.urls.templates, loaderFunction);
       this.loadStylesheet(this.urls.stylesheet);
       this.loadJavascript(this.urls.jquery, function() {
-        $.browser.msie ? 
-          KTC.Loader.loadJavascript(KTC.Loader.urls.excanvas, runnerFunction) :
+        if ($.browser.msie) {
+          KTC.Loader.loadStylesheet(KTC.Loader.urls.iestyles);
+          KTC.Loader.loadJavascript(KTC.Loader.urls.excanvas, runnerFunction);
+        } else {
           runnerFunction();
+        }
       });
       this.loadJavascript(this.urls.numbers);
     },
@@ -130,7 +134,7 @@ KTC = {
       ['articles',            'Recent NYTimes Articles',      'triple open']
     ],
     
-    CANVASES_TO_DRAW : [
+    GRAPHS_TO_DRAW : [
       { 
         before : 'n_bills_cosponsored', 
         id : 'ktc_bills_canvas',
@@ -205,7 +209,7 @@ KTC = {
     run : function() {
       var text = KTC.Politician.searchText || KTC.Politician.getSelectedText();
       KTC.Loader.showSearch(text);
-      KTC.Politician.searchFor(text);
+      if (text) KTC.Politician.searchFor(text);
       KTC.Politician.searchText = null;    
     },
     
@@ -227,6 +231,23 @@ KTC = {
       var data = {name : this.mungeName(name), callback : 'KTC.Politician.loaded'};
       var url = KTC.Loader.urls.politician(data);
       $.ajax({url : url, dataType : 'script'});
+    },
+    
+    
+    // After the politician's data has loaded, we can really get started.
+    // Munge the data as needed.
+    loaded : function(data) {
+      var ktc = $('#ktc');
+      if (ktc.length == 0) return;        // Bail if they've closed the window.
+      data = window.eval("("+data+")");
+      data = this.mungeData(data);
+      if ((typeof(console) != 'undefined') && console.log) console.log(data);
+      ktc.remove();
+      this.render(data);
+      this.element.draggable();
+      KTC.Util.alignElement(this.element[0]);
+      this.element.hide();
+      $.browser.msie ? this.element.show() : this.element.fadeIn('slow');
     },
     
     
@@ -357,23 +378,6 @@ KTC = {
     },
     
     
-    // After the politician's data has loaded, we can really get started.
-    // Munge the data as needed.
-    loaded : function(data) {
-      var ktc = $('#ktc');
-      if (ktc.length == 0) return;        // Bail if they've closed the window.
-      data = window.eval("("+data+")");
-      data = this.mungeData(data);
-      if ((typeof(console) != 'undefined') && console.log) console.log(data);
-      ktc.remove();
-      this.render(data);
-      this.element.draggable();
-      KTC.Util.alignElement(this.element[0]);
-      this.element.hide();
-      $.browser.msie ? this.element.show() : this.element.fadeIn('slow');
-    },
-    
-    
     // Render KTC for a given congressman's data.
     render : function(data) {
       if (this.element) this.element.remove();
@@ -382,10 +386,26 @@ KTC = {
       this.element = $('#ktc');
       KTC.Util.alignElement(this.element[0], 'offscreen');
       this.element.css({'background-image' : 'url(' + this.BACKGROUND_URL + ')'});
-      $.each(this.INFO_TO_DISPLAY, function(){ KTC.Politician.renderBlock(this, data); });
-      $.each(this.CANVASES_TO_DRAW, function(){ KTC.Grapher.visualize(this, data); });
+      this.renderBlocks(data);
+      this.renderGraphs(data);
       this.renderContactInfo(data);
       this.renderPhotographs(data);
+    },
+    
+    
+    // Render all the predefined blocks of information.
+    renderBlocks : function(data) {
+      $.each(this.INFO_TO_DISPLAY, function(){ 
+        KTC.Politician.renderBlock(this, data); 
+      });
+    },
+    
+    
+    // Render all the predefined graphs to draw in the background.
+    renderGraphs : function(data) {
+      $.each(this.GRAPHS_TO_DRAW, function(){ 
+        KTC.Grapher.visualize(this, data); 
+      });
     },
     
     
@@ -420,22 +440,47 @@ KTC = {
   // Graphing functions, for working with Canvases
   Grapher : {
     
+    // How curvy should the curves between datapoints be?
     CURVE_FACTOR : 0.5,
+    
+    
+    // Test to see if the canvas is working..
+    testCanvas : function() {
+      G_vmlCanvasManager.init();
+      var width = 150; var height = 150;
+      var el = document.createElement('canvas');
+      el.id = 'some_canvas'; el.width = width; el.height = height;
+      document.body.appendChild(el);
+      var canvas = document.getElementById('some_canvas');
+      if (window.G_vmlCanvasManager) canvas = G_vmlCanvasManager.initElement(canvas);
+      var p = canvas.getContext('2d');
+      p.beginPath();
+      p.arc(75,75,50,0,Math.PI*2,true); // Outer circle
+      p.moveTo(110,75);
+      p.arc(75,75,35,0,Math.PI,false);   // Mouth (clockwise)
+      p.moveTo(65,65);
+      p.arc(60,65,5,0,Math.PI*2,true);  // Left eye
+      p.moveTo(95,65);
+      p.arc(90,65,5,0,Math.PI*2,true);  // Right eye
+      p.stroke();
+    },
         
         
     // Visualize the data provided according to the meta.
     visualize : function(meta, data) {
-      var firstBlock = $('#ktc .block');
+      var width = meta.width; var height = meta.height;
+      var blocks = $('#ktc .blocks');
       var toPrecede = $('#ktc .block.' + meta.before);
       toPrecede.before(KTC.templates.canvas(meta));
       // It's absolutely positioned, so we gotta stick it in the right place.
-      var canvas = $('#' + meta.id);
-      var top = toPrecede.offset().top - firstBlock.offset().top;
-      var left = toPrecede.offset().left - firstBlock.offset().left;
-      var yOff = meta.before == 'n_bills_cosponsored' ? 3 : 6;
-      canvas.css({'margin-top' : top + yOff, 'margin-left' : left});
-      canvas = canvas.find('canvas');
-      var width = meta.width; var height = meta.height;
+      var cont = $('#' + meta.id);
+      var top = toPrecede.offset().top - blocks.offset().top + 3;
+      var left = toPrecede.offset().left - blocks.offset().left;
+      cont.css({'margin-top' : top, 'margin-left' : left});
+      cont.append(document.createElement('canvas'));
+      var canvas = cont.find('canvas');
+      canvas.attr({width : width, height : height});
+      canvas.css({width : width, height : height});
       var element = canvas.get()[0];
       if (window.G_vmlCanvasManager) element = G_vmlCanvasManager.initElement(element);
       var p = element.getContext('2d');
