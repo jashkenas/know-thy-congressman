@@ -13,19 +13,28 @@ KTC = {
         stylesheet : KTC_ROOT + '/stylesheets/know-thy-congressman.css',
         jquery     : KTC_ROOT + '/javascripts/packed/jquery.js',
         jqueryDrag : KTC_ROOT + '/javascripts/packed/jquery_draggable.js',
+        excanvas   : KTC_ROOT + '/javascripts/packed/excanvas.js',
         numbers    : KTC_ROOT + '/javascripts/numbers.js',
         templates  : KTC_ROOT + '/templates.js',
         politician : KTC.Util.createTemplate(KTC_ROOT + '/find/<%= name %>.js?callback=<%= callback %>')
       };    
       
-      this.loadJavascript(this.urls.templates, function() {
+      var loaderFunction = function() {
         KTC.Loader.showSearch(KTC.Politician.getSelectedText());
-      });
-      this.loadStylesheet(this.urls.stylesheet);
-      this.loadJavascript(this.urls.jquery, function() {
+      };
+      
+      var runnerFunction = function() {
         KTC.Loader.attachLiveFunctions();
         KTC.Loader.loadJavascript(KTC.Loader.urls.jqueryDrag);
-        KTC.Politician.run(); 
+        KTC.Politician.run();
+      };
+      
+      this.loadJavascript(this.urls.templates, loaderFunction);
+      this.loadStylesheet(this.urls.stylesheet);
+      this.loadJavascript(this.urls.jquery, function() {
+        $.browser.msie ? 
+          KTC.Loader.loadJavascript(KTC.Loader.urls.excanvas, runnerFunction) :
+          runnerFunction();
       });
       this.loadJavascript(this.urls.numbers);
     },
@@ -40,14 +49,16 @@ KTC = {
       var className = text ? 'searching' : 'asking';
       document.body.innerHTML += KTC.templates.search({text : text, className : className});      
       KTC.Util.alignElement(document.getElementById('ktc'));
-      document.getElementById('ktc_search_input').focus();
+      if (!text) document.getElementById('ktc_search_input').focus();
     },
     
     
     // Attach all the "live" functions that we want hooked up to the UI.
     attachLiveFunctions : function() {
       $('#ktc_search_button').live('click', KTC.Politician.run);
-      $('#ktc .closer').live('click', function() { $('#ktc').fadeOut(); });
+      $('#ktc .closer').live('click', function() { 
+        $.browser.msie ? $('#ktc').hide() : $('#ktc').fadeOut(); 
+      });
       $('#ktc_search_input').live('keypress', function(e) {
         if (e.which == KTC.Loader.RETURN_KEY) KTC.Politician.run();
       });
@@ -65,7 +76,7 @@ KTC = {
       var script = document.createElement('script');
       script.src = location;
       script.type = 'text/javascript';
-      if (callback) script.onload = callback;
+      if (callback) this.setCallbackForResourceLoad(script, callback);
       this.getHeadTag().appendChild(script);
     },
     
@@ -76,8 +87,21 @@ KTC = {
       sheet.rel = 'stylesheet';
       sheet.type = 'text/css';
       sheet.href = location;
-      if (callback) sheet.onload = callback;
+      if (callback) this.setCallbackForResourceLoad(sheet, callback);
       this.getHeadTag().appendChild(sheet);
+    },
+    
+    
+    // Cross-browser set a callback for when a script tag is finished loading.
+    setCallbackForResourceLoad : function(tag, callback) {
+      tag.onload = callback;
+      tag.onreadystatechange = function() {
+        var state = tag.readyState;
+        if (state == 'complete' || state == 'loaded') {
+          tag.onreadystatechange = null;
+          callback();
+        }
+      };
     }
   },
   
@@ -337,13 +361,13 @@ KTC = {
       if (ktc.length == 0) return;        // Bail if they've closed the window.
       data = window.eval("("+data+")");
       data = this.mungeData(data);
-      if (console && console.log) console.log(data);
+      if (typeof(console) != 'undefined' && console.log) console.log(data);
       ktc.remove();
       this.render(data);
       this.element.draggable();
       KTC.Util.alignElement(this.element[0]);
       this.element.hide();
-      this.element.fadeIn('slow');
+      $.browser.msie ? this.element.show() : this.element.fadeIn('slow');
     },
     
     
@@ -409,7 +433,9 @@ KTC = {
       canvas.css({'margin-top' : top + yOff, 'margin-left' : left});
       canvas = canvas.find('canvas');
       var width = meta.width; var height = meta.height;
-      var p = canvas.get()[0].getContext('2d');
+      var element = canvas.get()[0];
+      if (G_vmlCanvasManager) element = G_vmlCanvasManager.initElement(element);
+      var p = element.getContext('2d');
       var colors = KTC.Politician.PARTY_COLORS;
       p.fillStyle = colors[data.party] || colors['Other'];
       p.strokeWidth = 0;
@@ -485,9 +511,13 @@ KTC = {
       if (mode == 'offscreen') {
         var top = -5000; var left = -5000;
       } else {
-        var top = window.scrollY + (window.innerHeight / 2) - (el.scrollHeight / 2);
-        var left = window.scrollX + (window.innerWidth / 2) - (el.scrollWidth / 2);
-        if (top < window.scrollY + 50) top = window.scrollY + 50;
+        // Dance around like a monkey for IE.
+        var scrollY = window.scrollY || 0; var scrollX = window.scrollX || 0;
+        var innerHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+        var innerWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        var top = scrollY + (innerHeight / 2) - (el.scrollHeight / 2);
+        var left = scrollX + (innerWidth / 2) - (el.scrollWidth / 2);
+        if (top < scrollY + 50) top = scrollY + 50;
       }
       el.style.top = top + 'px';
       el.style.left = left + 'px';
