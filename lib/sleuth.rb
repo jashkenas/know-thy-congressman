@@ -28,12 +28,12 @@ class Sleuth
     sunlight.join
     merge_data(sunlight_data)
     raise NotFoundException, "Can't find a politician by that name..." if sunlight_data.empty?
-    first_name, last_name, query_name = extract_name_from_congresspedia
+    first_name, last_name = extract_name_from_congresspedia
     bioguide_id = @data['bioguide_id']
             
     watchdog = Thread.new { watchdog_data = search_watchdog(bioguide_id) }
     flickr   = Thread.new { flickr_data   = search_flickr(first_name, last_name) }
-    tags     = Thread.new { tags_data     = search_nytimes_tags(query_name) }
+    tags     = Thread.new { tags_data     = search_nytimes_tags(first_name, last_name) }
     words    = Thread.new { words_data    = search_capitol_words(bioguide_id) }
     
     watchdog.join and tags.join
@@ -116,10 +116,13 @@ class Sleuth
   
   
   # Dig up the Person Facet from the Gray Lady...
-  def search_nytimes_tags(query_name)
+  # She's not so hot at name matching, so we just look for the last name,
+  # and perform the matching ourselves.
+  def search_nytimes_tags(first_name, last_name)
     safe_request('times tags') do
-      url = "#{TIMES_TAGS}&api-key=#{SECRETS['times_tags']}&query=#{query_name}"
-      result = get_json(url)['results'].first
+      url = "#{TIMES_TAGS}&api-key=#{SECRETS['times_tags']}&query=#{last_name}"
+      candidates = get_json(url)['results']
+      result = candidates.detect {|c| c.match(/#{first_name}/i) }
       facet = result ? result.sub(/\s*\(Per\)\Z/, '').upcase : nil
       {'person_facet' => facet}
     end
@@ -176,18 +179,14 @@ class Sleuth
   # We really need to try to get a valid first name and last name. The sunlight
   # labs API takes care of searching for a congressperson, but sometimes returns
   # names with extra junk (like initials). Use the congresspedia url instead.
-  # However, the sunlight data should return middle names (sometimes in
-  # the wrong fields) that we need for the Times Tags API. So we save it
-  # as the query_name...
   def extract_name_from_congresspedia
-    query = @data['query_name'] = "#{@data['firstname']} #{@data['lastname']}".squeeze(' ')
     url = @data['congresspedia_url']
     unless url.blank?
       name  = @data['congresspedia_url'].match(/title=(\w+)\Z/)[1].split('_')
       @data['firstname'] = name[0]
       @data['lastname']  = name[-1]
     end
-    return @data['firstname'], @data['lastname'], query
+    return @data['firstname'], @data['lastname']
   end
   
   
