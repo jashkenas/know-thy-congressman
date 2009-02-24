@@ -54,9 +54,20 @@ KTC = {
       text = KTC.Politician.searchText = text || KTC.Politician.searchText;
       var className = text ? 'searching' : 'asking';
       var html = KTC.templates.searcher({text : text, className : className});
-      document.body.innerHTML += html;      
-      KTC.Util.alignElement(document.getElementById('ktc'));
+      document.body.innerHTML += html;
+      ktc = document.getElementById('ktc');
+      KTC.Util.alignElement(ktc);
+      if (window.jQuery && $(ktc).draggable) $(ktc).draggable();
       if (!text) document.getElementById('ktc_search_input').focus();
+    },
+    
+    
+    // Show an error message (like when we can't find a politician...)
+    showError : function(data) {
+      var ktc = $('#ktc');
+      ktc.removeClass('searching');
+      ktc.addClass('erroring');
+      ktc.find('.search_error').html(data.error);
     },
     
     
@@ -240,6 +251,7 @@ KTC = {
       var ktc = $('#ktc');
       if (ktc.length == 0) return;        // Bail if they've closed the window.
       data = window.eval("("+data+")");
+      if (data.error) return KTC.Loader.showError(data);
       data = this.mungeData(data);
       if ((typeof(console) != 'undefined') && console.log) console.log(data);
       ktc.remove();
@@ -260,7 +272,7 @@ KTC = {
       data.state_name = this.STATE_MAP[data.state];
       data.requested_earmarks = KTC.Util.friendlyMoney(data.amt_earmark_requested);
       data.received_earmarks = this.mungeReceivedEarmarks(data);
-      data.born = (KTC.Util.truncate(data.birthplace, 20) || this.UNKNOWN) + ' <small>(' + this.mungeDate(data.birthday) + ")</span>";
+      data.born = (KTC.Util.truncate(data.birthplace, 20) || this.UNKNOWN) + ' <small>(' + this.mungeDate(data.birthday) + ")</small>";
       data.education = this.mungeEducation(data.education);
       data.maverickometer = (data.predictability ? ((1 - data.predictability) * 100).numberFormat("0.0") + '%' : this.UNKNOWN) + " <small>(measures unpredictability)</small>";
       data.speeches = data.words_per_speech ? data.words_per_speech + " <small>(spoke " + data.n_speeches + " times)</small>" : this.UNKNOWN;

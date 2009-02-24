@@ -4,8 +4,13 @@ class Politician < ActiveRecord::Base
   
   # Return cached data or find it out.
   def information
-    gather_information if stale?
-    self.json
+    begin
+      gather_information if stale?
+      self.json
+    rescue Sleuth::NotFoundException => e
+      self.destroy
+      {'error' => e.message}.to_json
+    end
   end
   
   

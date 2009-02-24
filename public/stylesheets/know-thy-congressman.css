@@ -44,14 +44,14 @@ Indy:         #80d68a
       position: absolute;
       top: 50px; right: 50px;
     }
-    #ktc.search .searching_for, #ktc.search .search_for {
+    #ktc.search .searching_for, #ktc.search .search_for, #ktc.search .error_for {
       display: none;
       font-size: 11px;
       font-weight: normal;
       text-transform: uppercase;
       line-height: 16px;
     }
-    #ktc.search .search_text, #ktc.search .search_input {
+    #ktc.search .search_text, #ktc.search .search_input, #ktc.search .search_error {
       display: none;
       margin: 7px 0 0 0;
       height: 20px;
@@ -73,7 +73,8 @@ Indy:         #80d68a
       }
       #ktc.search.searching .searching_for, #ktc.search.searching .search_text,
       #ktc.search.asking .search_for, #ktc.search.asking .search_input,
-      #ktc.search.searching img { 
+      #ktc.search.searching img, #ktc.search.erroring .error_for, 
+      #ktc.search.erroring .search_error { 
         display: block; 
       }
 
@@ -259,6 +260,7 @@ Indy:         #80d68a
     margin-right: 4px;
     font-size: 0px;
     border: 2px solid #B0B8B0;
+    line-height: 0px;
   }
     #ktc .block.photographs .photograph:hover {
       border: 2px solid #383435;

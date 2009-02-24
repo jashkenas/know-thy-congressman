@@ -5,6 +5,8 @@ require 'json'
 
 class Sleuth
   
+  class NotFoundException < RuntimeError; end
+  
   WATCHDOG       = 'watchdog.net'
   SUNLIGHT       = 'services.sunlightlabs.com/api'
   OPENSECRETS    = 'www.opensecrets.org/api/?output=json'
@@ -25,7 +27,7 @@ class Sleuth
     sunlight = Thread.new { sunlight_data = search_sunlight_labs(first_name, last_name) }
     sunlight.join
     merge_data(sunlight_data)
-    raise "Couldn't find politican on Sunlight Labs API" if sunlight_data.empty?
+    raise NotFoundException, "Can't find a politician by that name..." if sunlight_data.empty?
     first_name, last_name, query_name = extract_name_from_congresspedia
     bioguide_id = @data['bioguide_id']
             
@@ -61,6 +63,9 @@ class Sleuth
         cand['score'] += 0.3 if cand['legislator']['lastname'].match(/#{last_name}/i)
       end
       winner = candidates.sort_by {|cand| cand['result']['score'] }.last
+      score = winner['result']['score']
+      raise NotFoundException, "Can't find a politician by that name..." unless score > 1
+      winner['result']['legislator']['sunlight_score'] = score
       winner['result']['legislator']
     end
   end
@@ -85,7 +90,7 @@ class Sleuth
     safe_request('flickr') do
       url = "#{FLICKR}&api_key=#{SECRETS['flickr_key']}&text=\"#{first_name} #{last_name}\""
       data = get_json(url)
-      {'flickr' => data['photos']['photo']}
+      {'flickr' => data['photos'] ? data['photos']['photo'] : []}
     end
   end
   
@@ -175,11 +180,14 @@ class Sleuth
   # the wrong fields) that we need for the Times Tags API. So we save it
   # as the query_name...
   def extract_name_from_congresspedia
-    query = @data['query_name'] = "#{@data['firstname']} #{@data['middlename']} #{@data['lastname']}".squeeze(' ')
-    name  = @data['congresspedia_url'].match(/title=(\w+)\Z/)[1].split('_')
-    first = @data['firstname'] = name[0]
-    last  = @data['lastname']  = name[-1]
-    return first, last, query
+    query = @data['query_name'] = "#{@data['firstname']} #{@data['lastname']}".squeeze(' ')
+    url = @data['congresspedia_url']
+    unless url.blank?
+      name  = @data['congresspedia_url'].match(/title=(\w+)\Z/)[1].split('_')
+      @data['firstname'] = name[0]
+      @data['lastname']  = name[-1]
+    end
+    return @data['firstname'], @data['lastname'], query
   end
   
   
