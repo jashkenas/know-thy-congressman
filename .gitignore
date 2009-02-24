@@ -3,3 +3,4 @@ tmp
 db/*.sqlite3
 db/data.yml
 config/secrets.yml
+public/images/*.psd
