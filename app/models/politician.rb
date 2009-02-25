@@ -7,7 +7,7 @@ class Politician < ActiveRecord::Base
     begin
       gather_information if stale?
       self.json
-    rescue Sleuth::NotFoundException => e
+    rescue Services::NotFoundException => e
       self.destroy
       {'error' => e.message}.to_json
     end
@@ -16,7 +16,7 @@ class Politician < ActiveRecord::Base
   
   # Go out and re-spider this politician.
   def gather_information
-    self.json = Sleuth.new.dig_up_dirt(first_name, last_name).to_json
+    self.json = Services.dig_up_dirt(first_name, last_name).to_json
     save
   end
   
