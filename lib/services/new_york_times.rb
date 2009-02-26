@@ -9,11 +9,12 @@ module Services
     # Dig up the Person Facet from the Gray Lady...
     # She's not so hot at name matching, so we just look for the last name,
     # and perform the matching ourselves.
-    def self.search_tags(first_name, last_name)
+    def self.search_tags(data, first_name, last_name)
       safe_request('times tags') do
         url = "#{TAGS}&api-key=#{SECRETS['times_tags']}&query=#{last_name}"
         candidates = get_json(url)['results']
-        result = candidates.detect {|c| c.match(/#{first_name}/i) }
+        first_names = /(#{first_name}|#{data['firstname']})/i
+        result = candidates.detect {|c| c.match(first_names) }
         facet = result ? result.sub(/\s*\(Per\)\Z/, '').upcase : nil
         {'person_facet' => facet}
       end

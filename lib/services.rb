@@ -30,7 +30,7 @@ module Services
             
     watchdog = Thread.new { watchdog_data = Watchdog.search(bioguide_id) }
     flickr   = Thread.new { flickr_data   = Flickr.search(first_name, last_name) }
-    tags     = Thread.new { tags_data     = NewYorkTimes.search_tags(first_name, last_name) }
+    tags     = Thread.new { tags_data     = NewYorkTimes.search_tags(data, first_name, last_name) }
     words    = Thread.new { words_data    = CapitolWords.search(bioguide_id) }
     
     watchdog.join and tags.join

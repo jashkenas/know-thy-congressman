@@ -178,8 +178,8 @@ KTC = {
     },
     
     MONTH_MAP : {
-      '01' : 'Jan', '02' : 'Feb', '03' : 'Mar', '04' : 'Apr', '05' : 'May', '06' : 'Jun', 
-      '07' : 'Jul', '08' : 'Aug', '09' : 'Sep', '10' : 'Oct', '11' : 'Nov', '12' : 'Dec'
+      1 : 'Jan', 2 : 'Feb', 3 : 'Mar',  4 : 'Apr',  5 : 'May', 6  : 'Jun', 
+      7 : 'Jul', 8 : 'Aug', 9 : 'Sep', 10 : 'Oct', 11 : 'Nov', 12 : 'Dec'
     },
     
     STATE_MAP : {
@@ -367,13 +367,16 @@ KTC = {
       if (!date) return this.UNKNOWN;
       if (date.match(/-/)) {             // For "1976-10-10"
         var parts = date.split('-');
-        var year  = parts[0]; var month = parts[1]; var day = parts[2];
+        var year = parts[0]; var month = parts[1]; var day = parts[2];
+      } else if (date.match(/\//)) {     // For "10/10/1976"
+        var parts = date.split('/');
+        var year = parts[2]; var month = parts[0]; var day = parts[1];
       } else if (date.match(/^\d+$/)) {  // For "19761010"
         var year  = date.substr(0,4); 
         var month = date.substr(4,2);
         var day   = parseInt(date.substr(6,2), 10).toString();
       }
-      return this.MONTH_MAP[month] + " " + day + ", " + year;
+      return this.MONTH_MAP[parseInt(month, 10)] + " " + day + ", " + year;
     },
     
     
