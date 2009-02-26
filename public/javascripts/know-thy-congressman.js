@@ -59,7 +59,7 @@ KTC = {
       ktc = document.getElementById('ktc');
       ktc.style.display = 'block';
       KTC.Util.alignElement(ktc);
-      if (window.jQuery && $J(ktc).draggable) $J(ktc).draggable();
+      if (window['$J'] && $J(ktc).draggable) $J(ktc).draggable();
       if (!text) document.getElementById('ktc_search_input').focus();
     },
     
@@ -119,7 +119,7 @@ KTC = {
         var state = tag.readyState;
         if (state == 'complete' || state == 'loaded') {
           tag.onreadystatechange = null;
-          callback();
+          window.setTimeout(callback, 10);
         }
       };
     }
@@ -209,6 +209,8 @@ KTC = {
       'Rep' : 'Representative', 
       'Del' : 'Delegate'
     },
+    
+    CONTACT_INFO : ['email', 'phone', 'webform', 'wikipedia', 'congresspedia_url', 'website'],
     
     TOP_N_CONTRIBUTORS : 5,
     TOP_N_ARTICLES     : 5,
@@ -430,6 +432,9 @@ KTC = {
     
     // Render the block of contact/lookup information for the congressman.
     renderContactInfo : function(data) {
+      $J.each(this.CONTACT_INFO, function(i, key) {
+        data[key + "_class"] = data[key] ? '' : 'hidden';
+      });
       var html = KTC.templates.contact(data);
       this.element.find('.contact_info').append(html);
     },

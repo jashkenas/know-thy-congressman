@@ -1,6 +1,9 @@
 #ktc img {
   -ms-interpolation-mode: bicubic;
 }
+#ktc .backer {
+  filter: alpha(opacity=96);
+}
 #ktc .search_inner {
   width: 300px;
 }
@@ -11,7 +14,6 @@
     margin: 0 0 0 8px;
     padding: 2px 5px 2px 5px;
   }
-  
 #ktc .ktc_inner {
   top: 70px;
 }

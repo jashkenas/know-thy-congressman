@@ -104,7 +104,6 @@ Indy:         #80d68a
     width: 795px;
     height: 1160px;
     opacity: 0.96;
-    filter: alpha(opacity=96);
   }
   #ktc .closer {
     width: 30px; height: 30px;
@@ -150,12 +149,17 @@ Indy:         #80d68a
       background-repeat: no-repeat;
       background-position: 0px 2px;
     }
+      #ktc .contact_item.hidden {
+        display: none;
+      }
   #ktc .ktc_content {
     position: relative;
     z-index: 3;
   }
   #ktc .blocks {
-    padding-top: 197px;
+    position: relative;
+    top: 197px; left: 0px;
+    width: 765px; height: 940px;
   }
     #ktc .block {
       border-top: 3px double #b0b8b0;
@@ -170,6 +174,7 @@ Indy:         #80d68a
         position: absolute;
         top: 0px; left: 0px;
         z-index: -1;
+        margin-right: 0px;
       }
       #ktc .block.short {
         width: 181px;
@@ -257,6 +262,7 @@ Indy:         #80d68a
 }
   #ktc .block.photographs .photograph {
     float: left;
+    width: 75px; height: 75px;
     margin-right: 4px;
     font-size: 0px;
     border: 2px solid #B0B8B0;
