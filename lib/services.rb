@@ -17,7 +17,7 @@ module Services
   
   # Dig up all the dirt available about a congressman...
   def self.dig_up_dirt(first_name, last_name)
-    data = {}
+    data = {'search_first_name' => first_name, 'search_last_name' => last_name}
     sunlight_data, watchdog_data, flickr_data, contributor_data, industry_data, tags_data, articles_data, words_data = 
       {}, {}, {}, {}, {}, {}, {}, {}
       
@@ -30,7 +30,7 @@ module Services
             
     watchdog = Thread.new { watchdog_data = Watchdog.search(bioguide_id) }
     flickr   = Thread.new { flickr_data   = Flickr.search(first_name, last_name) }
-    tags     = Thread.new { tags_data     = NewYorkTimes.search_tags(data, first_name, last_name) }
+    tags     = Thread.new { tags_data     = NewYorkTimes.search_tags(data['search_first_name'], first_name, last_name) }
     words    = Thread.new { words_data    = CapitolWords.search(bioguide_id) }
     
     watchdog.join and tags.join

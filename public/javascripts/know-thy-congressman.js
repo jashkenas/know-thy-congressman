@@ -309,6 +309,7 @@ KTC = {
       var upto = KTC.Util.arrayMin([this.TOP_N_ARTICLES, data.nytimes_articles.length]);
       for (var i=0; i<upto; i++) {
         var art = data.nytimes_articles[i];
+        art.title = KTC.Util.truncate(art.title, 95);
         art.date = KTC.Politician.mungeDate(art.date);
         art.body = KTC.Util.truncate(art.body, 140);
         html += KTC.templates.article(art);
@@ -323,6 +324,7 @@ KTC = {
       if (!edu) return this.UNKNOWN;
       var degrees = [];
       $J.each(edu.replace(/\.$/, '').split(/\W*\n\W*/), function(i, deg) {
+        if (i > 2) return;
         var date = deg.match(/\d+$/);
         deg = KTC.Util.truncate(deg.replace(/,\s*\d+$/, ''), 95);
         if (date) deg += " <small>(" + date.toString() + ")</small>";
