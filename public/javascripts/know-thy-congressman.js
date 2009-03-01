@@ -172,9 +172,9 @@ KTC = {
     ],
     
     PARTY_COLORS : {
-      'Republican' : '#f58980', 
-      'Democrat'   : '#00e9f5', 
-      'Other'      : '#80d68a'
+      'R' : '#f58980', 
+      'D' : '#00e9f5', 
+      'I' : '#80d68a'
     },
     
     MONTH_MAP : {
@@ -343,14 +343,15 @@ KTC = {
       var counts = $J.map(data.capitol_words, function(w){ return w.word_count; });
       var max = KTC.Util.arrayMax(counts);
       var min = KTC.Util.arrayMin(counts);
-      var ratio = KTC.Util.computeScalingFactor(30, 0, max, min);
+      var ratio = KTC.Util.computeScalingFactor(22, 0, max, min);
       $J.each(data.capitol_words, function(i, word) { 
         word.klass = 'word_' + (i + 1);
         data[word.klass] = word.word_count;
         word.name = data.name;
         word.bioguide_id = data.bioguide_id;
         word.font_size = 45 + ((word.word_count - min) * ratio);
-        word.line_height = (110 - word.font_size) * 1.4;
+        word.line_height = 110 - word.font_size;
+        word.margin_top = 15 - word.font_size / 10;
         html += KTC.templates.word(word);
       });
       return html;
@@ -509,7 +510,7 @@ KTC = {
       if (window.G_vmlCanvasManager) element = G_vmlCanvasManager.initElement(element);
       var p = element.getContext('2d');
       var colors = KTC.Politician.PARTY_COLORS;
-      p.fillStyle = colors[data.party] || colors['Other'];
+      p.fillStyle = colors[data.party[0].toUpperCase()] || colors['I'];
       p.strokeWidth = 0;
             
       var nums = $J.map(meta.data, function(name){ return data[name]; });
