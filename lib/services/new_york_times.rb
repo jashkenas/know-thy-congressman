@@ -14,7 +14,6 @@ module Services
         url = "#{TAGS}&api-key=#{SECRETS['times_tags']}&query=#{last_name}"
         candidates = get_json(url)['results']
         matcher = /(#{first_name}|#{data['search_first_name']})/i
-        puts candidates
         result = candidates.detect {|c| c.match(matcher) }
         facet = result ? result.sub(/\s*\(Per\)\Z/, '').upcase : nil
         {'person_facet' => facet}
