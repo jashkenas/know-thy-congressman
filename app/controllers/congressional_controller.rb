@@ -5,7 +5,7 @@ class CongressionalController < ApplicationController
   def find
     first_name, last_name = params[:name].split('_')
     first_name.downcase! and last_name.downcase!
-    pol = Politician.find_or_create_by_first_name_and_last_name(first_name, last_name)
+    pol = Politician.search_for(first_name, last_name)
     info = pol.information
     respond_to do |format|
       format.json { render :json => info }

@@ -12,13 +12,15 @@
 ActiveRecord::Schema.define(:version => 20090121025708) do
 
   create_table "politicians", :force => true do |t|
-    t.string   "first_name",                   :null => false
-    t.string   "last_name",                    :null => false
-    t.text     "json",       :default => "{}", :null => false
+    t.string   "bioguide_id",                   :null => false
+    t.string   "first_name",                    :null => false
+    t.string   "last_name",                     :null => false
+    t.text     "json",        :default => "{}", :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "politicians", ["bioguide_id"], :name => "index_politicians_on_bioguide_id"
   add_index "politicians", ["first_name", "last_name"], :name => "index_politicians_on_first_name_and_last_name"
 
 end

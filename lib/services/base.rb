@@ -24,6 +24,10 @@ module Services
       rescue RestClient::Exception => e
         result = {}
         puts "error for: #{title} ... #{e}"
+      rescue Exception => e
+        puts e.message
+        puts e.backtrace
+        raise e
       end
       result
     end
