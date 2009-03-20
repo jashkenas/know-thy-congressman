@@ -61,8 +61,9 @@ module Services
   def self.extract_name_from_congresspedia(data)
     url = data['congresspedia_url']
     unless url.blank?
-      name  = data['congresspedia_url'].match(/\/wiki\/(\w+)\Z/)[1].split('_')
-      data['firstname'] = name[0]
+      name  = url.match(/\/wiki\/(.+)\Z/)[1].split('_')
+      # Filter out mistaken middle names
+      data['firstname'] = name[0].gsub(/\s\w+$/, '')
       data['lastname']  = name[-1]
     end
     return data['firstname'], data['lastname']
