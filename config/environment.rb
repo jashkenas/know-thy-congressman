@@ -1,5 +1,3 @@
-RAILS_GEM_VERSION = '2.2.2'
-
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
