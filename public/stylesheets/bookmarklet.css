@@ -1,0 +1,73 @@
+/*------------------------------------------
+        BOOKMARKLET JUMP OFF PAGE
+------------------------------------------*/
+
+a {
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+  a.the_whole_enchilada {
+    color: red;
+    font-size: 16px;
+    text-decoration: underline;
+  }
+
+.container {
+  position: fixed;
+  top: 0px; right: 0px; bottom: 0px; left: 0px;
+  background: #fff url(/images/sky.png) 0 0 repeat-x;
+}
+  #explanation {
+    color: #422;
+    width: 400px;
+    position: fixed;
+    right: 15px; top: 31.5%;
+    border-right: 11px solid #fb5353;
+    padding: 11px 8px 11px 0;
+    text-align: right;
+    font: 14px/20px Arial, sans-serif;
+  }
+    #explanation span.def {
+      background: #edd;
+      padding: 0 2px 0 2px;
+      cursor: help;
+    }
+
+#knowthycongressman {
+  position: fixed;
+  right: 0px; top: 0px;
+}
+#horizon {
+  position: fixed;
+  bottom: 0px; left: 0px; right: 0px;
+  height: 75px;
+  background: red;
+  opacity: 0.45;
+  filter: alpha(opacity=45);
+}
+#sunlight {
+  width: 246px; height: 28px;
+  position: fixed;
+  bottom: 9px; right: 9px;
+  background: url(/images/an_app_for_america.png);
+}
+#senator, #ashurst {
+  position: fixed;
+  display: block;
+  width: 422px;
+  margin-left: -420px;
+  left: 50%; bottom: 0;
+}
+  #senator {
+    height: 556px;
+    background: url('/images/ashurst_arizona.png') 0 0 no-repeat;
+  }
+  #ashurst {
+    font: 11px Arial, sans-serif;
+    color: white;
+    bottom: 13px;
+    margin-left: -400px;
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+  }

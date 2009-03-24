@@ -1,15 +1,45 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <title>Know thy Congressman</title>
+  <link href="/stylesheets/bookmarklet.css" media="screen" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
-  <h1>Here we go</h1>
-  <a href="<%= render :partial => 'bookmarklet.js.erb' -%>">Know Thy Congressman!</a>
+  <div class="container"> </div>
+  
+  <div id="explanation">
+    <p>
+      <q>Know Thy Congressman</q>
+      is a 
+      <span class="def" title="a bookmark containing runnable code">bookmarklet</span>
+      that shows you an abundance of 
+      <span class="def" title="bills, earmarks, campaign contributors, articles, and the maverick-o-meter">political</span> 
+      and 
+      <span class="def" title="birthplace, education, photograph, favorite words, and contact information">biographical</span> 
+      information about members of the Senate and House of Representatives.
+    </p>
+    <p> 
+      To use it, highlight the name of a legislator on a webpage and click the bookmark.
+      Or, just click it whenever and type the name of the legislator you'd like to search for.
+      To install it, drag the link below into your 
+      <span class="def" title="located towards the top of the browser window">Bookmarks Toolbar</span>.
+    </p>
+    <p>
+      <a class="the_whole_enchilada" href="<%= render :partial => 'bookmarklet.js.erb' -%>">KTC</a>
+    </p>
+    <p>
+      Here's some famous names to get you started &mdash; <br />
+      Mitch Mcconnell, Nancy Pelosi, Thad Cochran, Patrick Leahy.
+    </p>
+  </div>
+
+  <img id="knowthycongressman" src="/images/KNOWTHYCONGRESSMAN.png" alt="" />
+  <div id="senator">  </div>
+  <div id="horizon">  </div>
+  <div id="sunlight"> </div>
+  <a href="http://en.wikipedia.org/wiki/Henry_F._Ashurst" id="ashurst">(Senator Ashurst of Arizona)</a>
 </body>
 </html>
