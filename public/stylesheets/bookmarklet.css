@@ -16,18 +16,28 @@ a {
 .container {
   position: fixed;
   top: 0px; right: 0px; bottom: 0px; left: 0px;
-  background: #fff url(/images/sky.png) 0 0 repeat-x;
+  background: #fff;
 }
-  #explanation {
+  #explanation, #explanation_backer {
     color: #422;
     width: 400px;
     position: fixed;
-    right: 15px; top: 31.5%;
+    right: 15px; top: 32.5%;
     border-right: 11px solid #fb5353;
-    padding: 11px 8px 11px 0;
+    padding: 11px 8px 11px 8px;
     text-align: right;
     font: 14px/20px Arial, sans-serif;
   }
+    #explanation_backer {
+      height: 282px; width: 412px;
+      padding: 0;
+      background: white;
+      opacity: 0.5;
+      filter: alpha(opacity=50);
+    }
+    #explanation p {
+      margin: 12px 0 12px 0;
+    }
     #explanation span.def {
       background: #edd;
       padding: 0 2px 0 2px;
@@ -61,7 +71,7 @@ a {
 }
   #senator {
     height: 556px;
-    background: url('/images/ashurst_arizona.png') 0 0 no-repeat;
+    background: url('/images/ashurst_arizona.jpg') 0 0 no-repeat;
   }
   #ashurst {
     font: 11px Arial, sans-serif;
