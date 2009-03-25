@@ -8,7 +8,7 @@ a {
   outline: none;
 }
   a.the_whole_enchilada {
-    color: red;
+    color: #cf1a0c;
     font-size: 16px;
     text-decoration: underline;
   }
@@ -22,14 +22,14 @@ a {
     color: #422;
     width: 400px;
     position: fixed;
-    right: 15px; top: 32.5%;
-    border-right: 11px solid #fb5353;
-    padding: 11px 8px 11px 8px;
+    right: 0px; top: 32.5%;
+    border-right: 15px solid #d94a3f;
+    padding: 15px;
     text-align: right;
     font: 14px/20px Arial, sans-serif;
   }
     #explanation_backer {
-      height: 282px; width: 412px;
+      height: 282px; width: 424px;
       padding: 0;
       background: white;
       opacity: 0.5;
@@ -52,11 +52,12 @@ a {
   position: fixed;
   bottom: 0px; left: 0px; right: 0px;
   height: 75px;
-  background: red;
-  opacity: 0.45;
-  filter: alpha(opacity=45);
+  background: #cf1a0c;
+  opacity: 0.58;
+  filter: alpha(opacity=58);
 }
 #sunlight {
+  display: block;
   width: 246px; height: 28px;
   position: fixed;
   bottom: 9px; right: 9px;
@@ -66,8 +67,8 @@ a {
   position: fixed;
   display: block;
   width: 422px;
-  margin-left: -420px;
-  left: 50%; bottom: 0;
+  margin-left: -200px;
+  left: 25%; bottom: 0;
 }
   #senator {
     height: 556px;
@@ -77,7 +78,7 @@ a {
     font: 11px Arial, sans-serif;
     color: white;
     bottom: 13px;
-    margin-left: -400px;
+    margin-left: -180px;
     opacity: 0.65;
     filter: alpha(opacity=65);
   }
