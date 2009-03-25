@@ -18,7 +18,7 @@ a {
   top: 0px; right: 0px; bottom: 0px; left: 0px;
   background: #fff;
 }
-  #explanation, #explanation_backer {
+  #explanation {
     color: #422;
     width: 400px;
     height: 20%;
@@ -29,16 +29,12 @@ a {
     text-align: right;
     font: 14px/20px Arial, sans-serif;
   }
-    #explanation_backer {
-      height: 260px; width: 424px;
-      padding: 0;
-      background: white;
-      opacity: 0.5;
-      filter: alpha(opacity=50);
-    }
     #explanation_inner {
       position: absolute;
-      bottom: 45px; right: 15px;
+      padding: 15px;
+      width: 412px;
+      background: url(/images/glaze.png);
+      bottom: 30px; right: 0px;
     }
     #explanation p {
       margin: 0;
@@ -65,7 +61,7 @@ a {
   display: block;
   width: 246px; height: 28px;
   position: fixed;
-  bottom: 9px; right: 9px;
+  bottom: 5px; right: 38px;
   background: url(/images/an_app_for_america.png);
 }
 #senator, #ashurst {
@@ -82,7 +78,7 @@ a {
   #ashurst {
     font: 11px Arial, sans-serif;
     color: white;
-    bottom: 13px;
+    bottom: 9px;
     margin-left: -180px;
     opacity: 0.65;
     filter: alpha(opacity=65);
