@@ -15,15 +15,15 @@ module Services
 
     # Ensure that a failed api call doesn't screw up the remainder of our data.
     def safe_request(title, opts={})
-      puts "starting: #{title}"
+      RAILS_DEFAULT_LOGGER.info "starting: #{title}"
       result = {}
       return result if opts.has_key?(:ensure) && !opts[:ensure]
       begin
         result = yield
-        puts "done with: #{title}"
+        RAILS_DEFAULT_LOGGER.info "done with: #{title}"
       rescue RestClient::Exception => e
         result = {}
-        puts "error for: #{title} ... #{e}"
+        RAILS_DEFAULT_LOGGER.info "error for: #{title} ... #{e}"
       end
       result
     end
