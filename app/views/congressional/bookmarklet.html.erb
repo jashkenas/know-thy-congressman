@@ -14,32 +14,32 @@
   
   <div id="explanation_backer"> </div>
   <div id="explanation">
-    <p>
-      <q>Know Thy Congressman</q>
-      is a 
-      <span class="def" title="a bookmark containing runnable code">bookmarklet</span>
-      that shows you an abundance of 
-      <span class="def" title="bills, earmarks, campaign contributors, articles, and the maverick-o-meter">political</span> 
-      and 
-      <span class="def" title="birthplace, education, photograph, favorite words, and contact information">biographical</span> 
-      information about members of the Senate and House of Representatives.
-    </p>
-    <br />
-    <p> 
-      To use it, highlight the name of a legislator on a webpage and click the bookmark.
-      Or, just click it anytime and type the name of the legislator you'd like to search for.
-      To install it, drag the link below into your 
-      <span class="def" title="located towards the top of the browser window">Bookmarks Toolbar</span>.
-    </p>
-    <br />
-    <p>
-      <a class="the_whole_enchilada" href="<%= render :partial => 'bookmarklet.js.erb' -%>">KTC</a>
-    </p>
-    <br />
-    <p>
-      Here's some famous names to get you started &mdash; <br />
-      Mitch Mcconnell, Nancy Pelosi, Thad Cochran, Patrick Leahy.
-    </p>
+    <div id="explanation_inner">
+      <p class="first_child">
+        <q><span class="def" title="Know Thy Congressman">KTC</span></q>
+        is a 
+        <span class="def" title="a browser bookmark containing runnable code">bookmarklet</span>
+        that displays an abundance of political and biographical
+        <span class="def" title="bills, birthplace, earmarks, campaign contributors, articles, favorite words, education, photographs, a maverick-o-meter and more...">information</span> 
+        about current members of the Senate and House of Representatives.
+      </p>
+      <br />
+      <p> 
+        To use it, highlight the name of a legislator on a webpage and click the bookmark.
+        Or, click it anytime to search politicians by name.
+        To install it, drag the link below into your 
+        <span class="def" title="located towards the top of the browser window">Bookmarks Toolbar</span>.
+      </p>
+      <br />
+      <p>
+        <a class="the_whole_enchilada" title="drag me into your bookmarks" href="<%= render :partial => 'bookmarklet.js.erb' -%>">KTC</a>
+      </p>
+      <br />
+      <p>
+        Here's some famous names to get you started &mdash; <br />
+        Mitch McConnell, Nancy Pelosi, Thad Cochran, Charlie Rangel.
+      </p>
+    </div>
   </div>
 
   <img id="knowthycongressman" src="/images/KNOWTHYCONGRESSMAN.png" alt="" />

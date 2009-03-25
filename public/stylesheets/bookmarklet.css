@@ -21,10 +21,11 @@ a {
   #explanation, #explanation_backer {
     color: #422;
     width: 400px;
+    height: 20%;
     position: fixed;
-    right: 0px; top: 33.5%;
-    border-right: 15px solid #d94a3f;
-    padding: 0 15px;
+    right: 0px; top: 0;
+    border-right: 30px solid #d94a3f;
+    padding: 360px 15px 0 15px;
     text-align: right;
     font: 14px/20px Arial, sans-serif;
   }
@@ -34,6 +35,10 @@ a {
       background: white;
       opacity: 0.5;
       filter: alpha(opacity=50);
+    }
+    #explanation_inner {
+      position: absolute;
+      bottom: 45px; right: 15px;
     }
     #explanation p {
       margin: 0;
@@ -46,15 +51,15 @@ a {
 
 #knowthycongressman {
   position: fixed;
-  right: 0px; top: 0px;
+  right: 30px; top: 0px;
 }
 #horizon {
   position: fixed;
   bottom: 0px; left: 0px; right: 0px;
   height: 75px;
   background: #cf1a0c;
-  opacity: 0.58;
-  filter: alpha(opacity=58);
+  opacity: 0.77;
+  filter: alpha(opacity=77);
 }
 #sunlight {
   display: block;
