@@ -269,7 +269,7 @@ KTC = {
     
     // Go through the data object, munging what we need to for display.
     mungeData : function(data) {
-      data.party_affiliation = (data.party == "Democrat") ? "Democratic" : data.party;
+      data.party_affiliation = this.mungeParty(data);
       data.kind_of_congressman = this.KIND_OF_CONGRESSMAN_MAP[data.title];
       data.name = data.firstname + " " + data.lastname;
       data.titled_name = data.kind_of_congressman + " " + data.lastname;
@@ -319,6 +319,14 @@ KTC = {
       return html;
     },
     
+    // Get the legislator's party. Strip out all of that "Working Families"
+    // and New York cross-registration business.
+    mungeParty : function(data) {
+      if ((/Democrat/).test(data.party))    return "Democratic";
+      if ((/Republican/).test(data.party))  return "Republican";
+      if ((/Independent/).test(data.party)) return "Independent";
+      return '';
+    },
     
     // Get a properly-formatted education out of the data.
     // Remove honorary degrees (what do they really count for anyway? ...)

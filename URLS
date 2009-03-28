@@ -9,3 +9,20 @@ http://wiki.sunlightlabs.com/index.php/Main_Page#Public_APIs_for_government_data
 
 Rest-Client docs:
 http://rest-client.heroku.com/rdoc/
+
+
+Convenience script to bang on the API a bit:
+
+lines = File.readlines('apidump.csv')
+names = lines.map {|l| l.split(/,\s*/) }.map {|l| l[1].match(/\w+/)[0] + "_" + l[3] }
+
+names.each do |n|
+  puts n
+  url = URI.encode("http://know-thy-congressman.com/find/#{n}.json")
+  puts url
+  begin
+    RestClient.get(url)
+  rescue
+    puts "FAILED: #{url}"
+  end
+end

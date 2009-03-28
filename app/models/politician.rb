@@ -23,7 +23,7 @@ class Politician < ActiveRecord::Base
   
   # Is our cache empty or past its expiration date?
   def stale?
-    updated_at < 1.week.ago || json == '{}'
+    updated_at < 1.month.ago || json == '{}'
   end
   
 end
