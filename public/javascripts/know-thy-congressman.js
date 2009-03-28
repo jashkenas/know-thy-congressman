@@ -210,6 +210,12 @@ KTC = {
       'Del' : 'Delegate'
     },
     
+    PARTY_MAP : [
+      [(/Democrat/i), "Democratic"],
+      [(/Republican/i), "Republican"],
+      [(/Independent/i), "Independent"]      
+    ],
+    
     CONTACT_INFO : ['email', 'phone', 'webform', 'wikipedia', 'congresspedia_url', 'website'],
     
     TOP_N_CONTRIBUTORS : 5,
@@ -322,9 +328,10 @@ KTC = {
     // Get the legislator's party. Strip out all of that "Working Families"
     // and New York cross-registration business.
     mungeParty : function(data) {
-      if ((/Democrat/).test(data.party))    return "Democratic";
-      if ((/Republican/).test(data.party))  return "Republican";
-      if ((/Independent/).test(data.party)) return "Independent";
+      var map = KTC.Politician.PARTY_MAP;
+      for (var i=0; i<map.length; i++) {
+        if (map[i][0].test(data.party)) return map[i][1];
+      }
       return '';
     },
     
