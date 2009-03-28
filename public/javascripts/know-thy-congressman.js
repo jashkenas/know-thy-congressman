@@ -526,7 +526,8 @@ KTC = {
       if (window.G_vmlCanvasManager) element = G_vmlCanvasManager.initElement(element);
       var p = element.getContext('2d');
       var colors = KTC.Politician.PARTY_COLORS;
-      p.fillStyle = colors[data.party[0].toUpperCase()] || colors['I'];
+      var ident = data.party.substr(0,1).toUpperCase();
+      p.fillStyle = colors[ident] || colors['I'];
       p.strokeWidth = 0;
             
       var nums = $J.map(meta.data, function(name){ return data[name]; });

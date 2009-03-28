@@ -5,13 +5,13 @@
   filter: alpha(opacity=96);
 }
 #ktc .search_inner {
-  width: 300px;
+  width: 280px;
 }
   #ktc.searching .search_inner {
     padding-bottom: 15px;
   }
   #ktc.search #ktc_search_button {
-    margin: 0 0 0 8px;
+    margin: 0 0 0 6px;
     padding: 2px 5px 2px 5px;
   }
 #ktc .ktc_inner {
