@@ -20,7 +20,7 @@ module Services
         end
         winner = candidates.sort_by {|cand| cand['result']['score'] }.last
         score = winner['result']['score']
-        raise Services::NotFoundException, "Can't find a politician by that name..." unless score > 1
+        raise Services::NotFoundException, "Can't find a legislator by that name..." unless score > 1
         winner['result']['legislator']['sunlight_score'] = score
         winner['result']['legislator']
       end

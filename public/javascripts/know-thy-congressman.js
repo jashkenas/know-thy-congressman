@@ -291,6 +291,7 @@ KTC = {
       data.articles = this.mungeArticles(data);
       data.words = this.mungeWords(data);
       data.wikipedia = this.mungeWikipedia(data.wikipedia);
+      data.key_votes_url = "http://projects.washingtonpost.com/congress/members/" + data.bioguide_id + "/key-votes/";
       data.ktc_root = window.KTC_ROOT;
       return data;
     },

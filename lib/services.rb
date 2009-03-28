@@ -24,7 +24,7 @@ module Services
     sunlight = Thread.new { sunlight_data = Sunlight.search(first_name, last_name) }
     sunlight.join
     merge_data(data, sunlight_data)
-    raise NotFoundException, "Can't find a politician by that name..." if sunlight_data.empty?
+    raise NotFoundException, "Can't find a legislator by that name..." if sunlight_data.empty?
     first_name, last_name = extract_name_from_congresspedia(data)
     bioguide_id = data['bioguide_id']
             

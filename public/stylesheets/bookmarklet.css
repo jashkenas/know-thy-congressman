@@ -39,7 +39,7 @@ a {
       margin: 0;
     }
     #explanation span.def {
-      background: #edd;
+      border-bottom: 1px dotted #d94a3f;
       padding: 0 2px 0 2px;
       cursor: help;
     }
