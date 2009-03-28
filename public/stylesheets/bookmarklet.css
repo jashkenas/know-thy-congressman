@@ -21,7 +21,7 @@ a {
   #explanation {
     color: #422;
     width: 400px;
-    height: 20%;
+    height: 16%;
     position: fixed;
     right: 0px; top: 0;
     border-right: 30px solid #d94a3f;
@@ -31,10 +31,9 @@ a {
   }
     #explanation_inner {
       position: absolute;
-      padding: 15px;
-      width: 412px;
-      background: url(/images/glaze.png);
-      bottom: 30px; right: 0px;
+      padding: 15px 14px 0 15px;
+      width: 425px;
+      bottom: 0px; right: 0px;
     }
     #explanation p {
       margin: 0;
