@@ -21,10 +21,14 @@ KTC = {
       };    
       
       var loaderFunction = function() {
+        KTC.Loader.loaded = true;
         KTC.Loader.showSearch(KTC.Politician.getSelectedText());
       };
       
       var runnerFunction = function() {
+        // In some circumstances (I'm looking at you, Safari), not even the templates 
+        // will have loaded by this point, and we need to wait for them.
+        if (!KTC.Loader.loaded) return setTimeout(runnerFunction, 50);
         KTC.Loader.attachLiveFunctions();
         KTC.Loader.loadJavascript(KTC.Loader.urls.jqueryDrag, function() {
           $J('#ktc').draggable();
@@ -403,7 +407,7 @@ KTC = {
     },
     
     
-    // Convert a name to standard firstName_lastName form.
+    // Convert a name to standard firstname_lastname form.
     mungeName : function(name) {
       name = KTC.Util.removeAccents(name);
       if (name.match(/,/)) name = name.split(/,\s*/).reverse().join(' ');
