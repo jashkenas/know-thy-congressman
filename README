@@ -1,9 +1,57 @@
-Can map states like so:
-http://chart.apis.google.com/chart?cht=t&chs=220x120&chd=t:0,100,50&chco=E2E8E4,E2E8E4,AFFF99&chld=AKALCA&chtm=usa&chf=bg,s,EAF7FE
+      ___                       ___     
+     /__/|          ___        /  /\    
+    |  |:|         /  /\      /  /:/    
+    |  |:|        /  /:/     /  /:/     
+  __|  |:|       /  /:/     /  /:/  ___ 
+ /__/\_|:|____  /  /::\    /__/:/  /  /\
+ \  \:\/:::::/ /__/:/\:\   \  \:\ /  /:/
+  \  \::/~~~~  \__\/  \:\   \  \:\  /:/ 
+   \  \:\           \  \:\   \  \:\/:/  
+    \  \:\           \__\/    \  \::/   
+     \__\/                     \__\/    
+     
+     
+This repository contains the unabridged source code for 
+know-thy-congressman.com, a web-service/bookmarklet that displays beaucoup
+information about your elected representatives.
 
+Let me briefly describe the nature of the beast: When you click on the KTC 
+bookmarklet, you load in all the Javascript, CSS, and Javascript Templates 
+needed to render the eventual display. A search request for the given legislator
+is sent to the server, where, if the politician's information is not yet cached
+in the database, it is split out into many different requests for each of the 
+supporting APIs, requested in parallel to a certain degree, and then merged
+back into one large JSON data dump. The politician's JSON gets cached in the 
+database, and the result is returned to the bookmarklet, which handles the 
+parsing and graphing in Javascript to display the information on the screen.
 
-YouTube
+Notable Methods:
 
-Top Words
-
-Last elected in receiving percent votes.
+  * Services.dig_up_dirt (in lib/services.rb)
+    The main API querying method. Threads out requests to each of the APIs.
+    
+  * Services::Base#safe_request (in lib/services/base.rb)
+    Accepts a block that executes a request, and ensures that any momentary API 
+    downtime doesn't screw up the big picture.
+    
+  * Politician#information (in app/models/politician.rb)
+    Accessing the information dump about a politician performs a search if the
+    information has gone stale.
+    
+  * KTC.Loader (in public/javascripts/know-thy-congressman.js) has some 
+    interesting methods for loading cross-domain css and javascripts in a 
+    browser compatible fashion, even when JQuery has not yet been loaded.
+    
+  * KTC.Grapher.visualize (in public/javascripts/know-thy-congressman.js) is a
+    messy ol' method, but is able to handle the canvas-based graphing of several 
+    types of information: earmarks, votes, and favorite words.
+    
+  * KTC.Util.reloadCss (in public/javascripts/know-thy-congressman.js) is a 
+    nice debugging bookmarklet to refresh all of the CSS on the page, without
+    needing to reload it.
+    
+  * KTC.Politician.INFO_TO_DISPLAY (in public/javascripts/know-thy-congressman.js)
+    is the constant that determines the layout, ordering, and data binding of
+    the final display, and makes it simple to try out different arrangements.
+    
+    

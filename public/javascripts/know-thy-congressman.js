@@ -485,29 +485,6 @@ KTC = {
     
     // How curvy should the curves between datapoints be?
     CURVE_FACTOR : 0.5,
-    
-    
-    // Test to see if the canvas is working..
-    testCanvas : function() {
-      G_vmlCanvasManager.init();
-      var width = 150; var height = 150;
-      var el = document.createElement('canvas');
-      el.id = 'some_canvas'; el.width = width; el.height = height;
-      document.body.appendChild(el);
-      var canvas = document.getElementById('some_canvas');
-      if (window.G_vmlCanvasManager) canvas = G_vmlCanvasManager.initElement(canvas);
-      var p = canvas.getContext('2d');
-      p.beginPath();
-      p.arc(75,75,50,0,Math.PI*2,true); // Outer circle
-      p.moveTo(110,75);
-      p.arc(75,75,35,0,Math.PI,false);   // Mouth (clockwise)
-      p.moveTo(65,65);
-      p.arc(60,65,5,0,Math.PI*2,true);  // Left eye
-      p.moveTo(95,65);
-      p.arc(90,65,5,0,Math.PI*2,true);  // Right eye
-      p.stroke();
-    },
-        
         
     // Visualize the data provided according to the meta.
     visualize : function(meta, data) {

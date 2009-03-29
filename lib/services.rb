@@ -16,6 +16,10 @@ module Services
   
   
   # Dig up all the dirt available about a congressman...
+  # Try to execute these calls as much in parallel as possible. However, some
+  # requests must be made before others, so take care of that as well...
+  # (eg. We need the name before looking up NYTimes tags, we need the tag before
+  # looking for NYTimes articles).
   def self.dig_up_dirt(first_name, last_name)
     data = {'search_first_name' => first_name, 'search_last_name' => last_name}
     sunlight_data, watchdog_data, flickr_data, contributor_data, industry_data, tags_data, articles_data, words_data = 
