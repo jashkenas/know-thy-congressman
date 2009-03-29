@@ -333,7 +333,7 @@ KTC = {
       for (var i=0; i<map.length; i++) {
         if (map[i][0].test(data.party)) return map[i][1];
       }
-      return '';
+      return data.party;
     },
     
     // Get a properly-formatted education out of the data.
