@@ -262,7 +262,7 @@ KTC = {
       if (ktc.length == 0) return;        // Bail if they've closed the window.
       data = window.eval("("+data+")");
       if (data.error) return KTC.Loader.showError(data);
-      if (!data.born && !data.n_earmark_received && !data.education && !data.n_bills_introduced) return KTC.Loader.showError("Can't find enough information...");
+      if (!data.born && !data.n_earmark_received && !data.education && !data.n_bills_introduced) return KTC.Loader.showError({error : "Can't find enough information..."});
       data = this.mungeData(data);
       if ((typeof(console) != 'undefined') && console.log) console.log(data);
       ktc.remove();
