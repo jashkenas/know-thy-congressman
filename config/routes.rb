@@ -35,7 +35,8 @@ ActionController::Routing::Routes.draw do |map|
 
   # See how all your routes lay out with "rake routes"
   
-  map.index '/', :controller => 'congressional', :action => 'bookmarklet'
+  map.root :controller => 'congressional', :action => 'bookmarklet'
+  map.credits 'credits', :controller => 'congressional', :action => 'credits'
   map.search 'find/:name.:format', :controller => 'congressional', :action => 'find'
   map.templates 'templates.:format', :controller => 'congressional', :action => 'templates'
 

@@ -43,6 +43,9 @@ a {
       padding: 0 2px 0 2px;
       cursor: help;
     }
+    #explanation li a {
+      border-bottom: 1px solid #d94a3f;
+    }
 
 #knowthycongressman {
   position: fixed;

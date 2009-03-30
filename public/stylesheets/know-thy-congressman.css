@@ -106,6 +106,14 @@ Indy:         #80d68a
     height: 1160px;
     opacity: 0.96;
   }
+  #ktc .credits {
+    display: block;
+    width: 11px; height: 45px;
+    position: absolute;
+    bottom: 32px; right: 0px;
+    cursor: pointer;
+    z-index: 4;
+  }
   #ktc .closer {
     width: 30px; height: 30px;
     position: absolute;

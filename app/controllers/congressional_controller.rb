@@ -25,8 +25,14 @@ class CongressionalController < ApplicationController
   end
   
   
-  # Dynamically render the bookmarklet javascript, for flexibility.
+  # The main site index.
   def bookmarklet
+    # Just render.
+  end
+  
+  
+  # A Credits and Thanks page.
+  def credits
     # Just render.
   end
   
