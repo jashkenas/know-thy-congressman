@@ -541,7 +541,7 @@ KTC = {
       if (window.G_vmlCanvasManager) element = G_vmlCanvasManager.initElement(element);
       var p = element.getContext('2d');
       var colors = KTC.Politician.PARTY_COLORS;
-      var ident = data.party.substr(0,1).toUpperCase();
+      var ident = data.party_affiliation.substr(0,1).toUpperCase();
       p.fillStyle = colors[ident] || colors['I'];
       p.strokeWidth = 0;
             
