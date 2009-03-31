@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090121025708) do
+ActiveRecord::Schema.define(:version => 20090331012417) do
 
   create_table "politicians", :force => true do |t|
     t.string   "first_name",                   :null => false
@@ -20,5 +20,11 @@ ActiveRecord::Schema.define(:version => 20090121025708) do
   end
 
   add_index "politicians", ["first_name", "last_name"], :name => "index_politicians_on_first_name_and_last_name"
+
+  create_table "statistics", :force => true do |t|
+    t.text     "json",       :default => "{}", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end
