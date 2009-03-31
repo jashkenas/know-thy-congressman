@@ -66,7 +66,7 @@ KTC = {
       if (window['$J'] && $J(ktc).draggable) $J(ktc).draggable();
       if (!text) document.getElementById('ktc_search_input').focus();
       // If we're on a page that's rendering in IE Quirks mode, fix it.
-      if (document.compatMode == 'BackCompat' && window['$J']) {
+      if (window['$J'] && $J.browser.msie && document.compatMode == 'BackCompat') {
         $J('#ktc .search_inner').css({width : '300px'});
       }
     },
