@@ -14,6 +14,7 @@ Indy:         #80d68a
 }
   #ktc a:hover {
     text-decoration: underline;
+/*    border-bottom: 1px solid;*/
   }
   #ktc a:visited {
     color: #383435;
@@ -256,7 +257,7 @@ Indy:         #80d68a
     font-size: 12px;
   }
     #ktc .table_row {
-      line-height: 16px;
+      line-height: 17px;
       position: relative;
     }
       #ktc .table_total {
@@ -266,7 +267,7 @@ Indy:         #80d68a
         line-height: 18px;
       }
 #ktc .block.photographs {
-  height: 120px;
+  height: 125px;
 }
   #ktc .block.photographs .photograph {
     float: left;

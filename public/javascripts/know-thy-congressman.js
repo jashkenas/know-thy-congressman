@@ -137,22 +137,24 @@ KTC = {
   // Base model for the selected politician.
   Politician : {
     
+    // Map all the info we'd like to display...
+    // Data key,              Label,                            Style,                Linked?
     INFO_TO_DISPLAY : [
-      ['n_bills_cosponsored', 'Bills Co-Sponsored',           'short xbig thin'],
-      ['n_bills_introduced',  'Bills Introduced',             'short xbig thin'],
-      ['n_bills_debated',     'Bills Debated',                'short xbig thin'],
-      ['n_bills_enacted',     'Bills Enacted',                'short xbig thin'],
-      ['born',                'Born',                         'double'],
-      ['speeches',            'Average Words per Speech',     ''],
-      ['requested_earmarks',  'Earmarks Requested',           ''],
-      ['received_earmarks',   'Earmarks Received',            ''],
-      ['maverickometer',      "Maverick-O-Meter",             ''],
-      ['education',           'Education',                    'xsmall triple open'],
-      ['industry_support',    'Top 5 Contributing Groups',                 'half table'],
-      ['institution_support', 'Top 5 Contributing Institutions',           'half table'],
-      ['words',               'Most Used Words',              'triple'],
-      ['photographs',         'Photographs',                  'triple'],
-      ['articles',            'Recent NYTimes Articles',      'triple open']
+      ['n_bills_cosponsored', 'Bills Co-Sponsored',             'short xbig thin'         ],
+      ['n_bills_introduced',  'Bills Introduced',               'short xbig thin',    true],
+      ['n_bills_debated',     'Bills Debated',                  'short xbig thin'         ],
+      ['n_bills_enacted',     'Bills Enacted',                  'short xbig thin'         ],
+      ['born',                'Born',                           'double'                  ],
+      ['speeches',            'Average Words per Speech',       ''                        ],
+      ['requested_earmarks',  'Earmarks Requested',             '',                   true],
+      ['received_earmarks',   'Earmarks Received',              ''                        ],
+      ['maverickometer',      "Maverick-O-Meter",               ''                        ],
+      ['education',           'Education',                      'xsmall triple open'      ],
+      ['industry_support',    'Top 5 Contributing Groups',      'half table'              ],
+      ['institution_support', 'Top 5 Contributing Institutions','half table'              ],
+      ['words',               'Most Used Words',                'triple'                  ],
+      ['photographs',         'Photographs',                    'triple'                  ],
+      ['articles',            'Recent NYTimes Articles',        'triple open'             ]
     ],
     
     GRAPHS_TO_DRAW : [
@@ -289,6 +291,11 @@ KTC = {
       data.name = data.firstname + " " + data.lastname;
       data.titled_name = data.kind_of_congressman + " " + data.lastname;
       data.state_name = this.STATE_MAP[data.state];
+      data.what_is = this.mungeWhatIs(data);
+      data.watchdog_url = 'http://watchdog.net/p/' + data.id;
+      data.n_bills_introduced_link = data.watchdog_url + '/introduced';
+      data.requested_earmarks_link = data.watchdog_url + '/earmarks';
+      data.speeches_link = 'http://www.govtrack.us/congress/person.xpd?tab=speeches&id=' + data.govtrack_id;
       data.requested_earmarks = KTC.Util.friendlyMoney(data.amt_earmark_requested);
       data.received_earmarks = this.mungeReceivedEarmarks(data);
       data.born = (KTC.Util.truncate(data.birthplace, 20) || this.UNKNOWN) + ' <small>(' + this.mungeDate(data.birthday) + ")</small>";
@@ -346,12 +353,20 @@ KTC = {
       return match ? match[0] : '';
     },
     
+    // Generate the linked title at the top of the page, describing what sort
+    // of legislator we have here, and linking to their district, if any.
+    mungeWhatIs : function(data) {
+      var inner = data.party_affiliation + " " + data.kind_of_congressman + " / " + data.state_name;
+      var link = data.title == "Rep";
+      return (link) ? '<a href="' + data.district + '" target="_blank">' + inner + '</a>' : inner;
+    },
+    
     // Get the number of times a legislator spoke.
     mungeSpeeches : function(data) {
       var per = data.words_per_speech;
       if (!per) return this.UNKNOWN;
       var times = data.n_speeches == 1 ? 'time' : 'times';
-      return per + " <small>(spoke " + data.n_speeches + " " + times + ")</small>";
+      return per + ' <a href="' + data.speeches_link + '" target="_blank"><small>(spoke ' + data.n_speeches + ' ' + times + ')</small></a>';
     },
     
     // Get a properly-formatted education out of the data.
@@ -489,6 +504,11 @@ KTC = {
     // Render a single datum in a block.
     renderBlock : function(meta, data) {
       var params = {key : meta[0], label : meta[1], klass : meta[2], content : data[meta[0]]};
+      if (meta[3]) { // Linked?
+        var href = data[params.key + "_link"];
+        params.content = '<a href="' + href + '" target="_blank">' + params.content + '</a>';
+        params.label = '<a href="' + href + '" target="_blank">' + params.label + '</a>';
+      }
       var html = KTC.templates.block(params);
       this.element.find('.blocks').append(html);
     }
