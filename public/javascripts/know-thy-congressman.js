@@ -148,8 +148,8 @@ KTC = {
       ['received_earmarks',   'Earmarks Received',            ''],
       ['maverickometer',      "Maverick-O-Meter",             ''],
       ['education',           'Education',                    'xsmall triple open'],
-      ['industry_support',    'Top 5 Groups',                 'half table'],
-      ['institution_support', 'Top 5 Institutions',           'half table'],
+      ['industry_support',    'Top 5 Contributing Groups',                 'half table'],
+      ['institution_support', 'Top 5 Contributing Institutions',           'half table'],
       ['words',               'Most Used Words',              'triple'],
       ['photographs',         'Photographs',                  'triple'],
       ['articles',            'Recent NYTimes Articles',      'triple open']
@@ -294,7 +294,7 @@ KTC = {
       data.born = (KTC.Util.truncate(data.birthplace, 20) || this.UNKNOWN) + ' <small>(' + this.mungeDate(data.birthday) + ")</small>";
       data.education = this.mungeEducation(data.education);
       data.maverickometer = (data.predictability ? ((1 - data.predictability) * 100).numberFormat("0.0") + '%' : this.UNKNOWN) + " <small>(measures unpredictability)</small>";
-      data.speeches = data.words_per_speech ? data.words_per_speech + " <small>(spoke " + data.n_speeches + " times)</small>" : this.UNKNOWN;
+      data.speeches = this.mungeSpeeches(data);
       data.industry_support = this.mungeTable(data, 'opensecrets_industries');
       data.institution_support = this.mungeTable(data, 'opensecrets_contributors');
       data.articles = this.mungeArticles(data);
@@ -346,6 +346,14 @@ KTC = {
       return match ? match[0] : '';
     },
     
+    // Get the number of times a legislator spoke.
+    mungeSpeeches : function(data) {
+      var per = data.words_per_speech;
+      if (!per) return this.UNKNOWN;
+      var times = data.n_speeches == 1 ? 'time' : 'times';
+      return per + " <small>(spoke " + data.n_speeches + " " + times + ")</small>";
+    },
+    
     // Get a properly-formatted education out of the data.
     // Remove honorary degrees (what do they really count for anyway? ...)
     mungeEducation : function(edu) {
@@ -375,7 +383,7 @@ KTC = {
         data[word.klass] = word.word_count;
         word.name = data.name;
         word.bioguide_id = data.bioguide_id;
-        word.font_size = 45 + ((word.word_count - min) * ratio);
+        word.font_size = 50 + ((word.word_count - min) * ratio);
         word.line_height = 110 - word.font_size;
         word.margin_top = 15 - word.font_size / 10;
         html += KTC.templates.word(word);

@@ -214,8 +214,8 @@ Indy:         #80d68a
           text-transform: uppercase;
         }
         #ktc .block .answer {
-          line-height: 35px;
-          font-size: 30px;
+          line-height: 30px;
+          font-size: 26px;
           margin: 5px 0 0 5px;
         }
           #ktc .block.xbig .answer {
@@ -250,15 +250,14 @@ Indy:         #80d68a
   font-size: 80px;
 }
 #ktc .block.table {
-  height: 135px;
+  height: 130px;
 }
   #ktc .block.table .answer {
-    font-size: 14px;
+    font-size: 12px;
   }
     #ktc .table_row {
       line-height: 16px;
       position: relative;
-      margin-bottom: 3px;
     }
       #ktc .table_total {
         position: absolute;
