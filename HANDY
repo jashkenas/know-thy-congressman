@@ -13,7 +13,7 @@ http://rest-client.heroku.com/rdoc/
 
 Convenience script to bang on the API a bit:
 
-lines = File.readlines('apidump.csv')
+lines = File.readlines('senators.csv') # Or apidump.csv
 names = lines.map {|l| l.split(/,\s*/) }.map {|l| l[1].match(/\w+/)[0] + "_" + l[3] }
 
 names.each do |n|
