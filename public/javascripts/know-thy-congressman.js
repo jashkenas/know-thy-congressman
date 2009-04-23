@@ -310,7 +310,9 @@ KTC = {
       data.articles = this.mungeArticles(data);
       data.words = this.mungeWords(data);
       data.wikipedia = this.mungeWikipedia(data.wikipedia);
-      data.key_votes_url = "http://projects.washingtonpost.com/congress/members/" + data.bioguide_id + "/key-votes/";
+      data.wash_post_url = "http://projects.washingtonpost.com/congress";
+      data.key_votes_url = data.wash_post_url + "/members/" + data.bioguide_id + "/key-votes";
+      data.votes_rss_url = data.wash_post_url + "/rss/members/" + data.bioguide_id;
       data.ktc_root = window.KTC_ROOT;
       return data;
     },
