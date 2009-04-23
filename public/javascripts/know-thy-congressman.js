@@ -311,7 +311,8 @@ KTC = {
       data.words = this.mungeWords(data);
       data.wikipedia = this.mungeWikipedia(data.wikipedia);
       data.wash_post_url = "http://projects.washingtonpost.com/congress";
-      data.key_votes_url = data.wash_post_url + "/members/" + data.bioguide_id + "/key-votes";
+      data.key_votes_url = data.wash_post_url + "/members/" + data.bioguide_id + "/key-votes/";
+      data.missed_votes_url = data.wash_post_url + "/members/" + data.bioguide_id + "/votes/missed/";
       data.votes_rss_url = data.wash_post_url + "/rss/members/" + data.bioguide_id;
       data.ktc_root = window.KTC_ROOT;
       return data;
