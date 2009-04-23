@@ -140,10 +140,10 @@ KTC = {
     // Map all the info we'd like to display...
     // Data key,              Label,                            Style,                Linked?
     INFO_TO_DISPLAY : [
-      ['n_bills_cosponsored', 'Bills Co-Sponsored',             'short xbig thin'         ],
+      ['n_bills_cosponsored', 'Bills Co-Sponsored',             'short xbig thin',    true],
       ['n_bills_introduced',  'Bills Introduced',               'short xbig thin',    true],
-      ['n_bills_debated',     'Bills Debated',                  'short xbig thin'         ],
-      ['n_bills_enacted',     'Bills Enacted',                  'short xbig thin'         ],
+      ['n_bills_debated',     'Bills Debated',                  'short xbig thin',    true],
+      ['n_bills_enacted',     'Bills Enacted',                  'short xbig thin',    true],
       ['born',                'Born',                           'double'                  ],
       ['speeches',            'Average Words per Speech',       ''                        ],
       ['requested_earmarks',  'Earmarks Requested',             '',                   true],
@@ -292,9 +292,12 @@ KTC = {
       data.titled_name = data.kind_of_congressman + " " + data.lastname;
       data.state_name = this.STATE_MAP[data.state];
       data.what_is = this.mungeWhatIs(data);
-      data.watchdog_url = 'http://watchdog.net/p/' + data.id;
-      data.n_bills_introduced_link = data.watchdog_url + '/introduced';
-      data.requested_earmarks_link = data.watchdog_url + '/earmarks';
+      data.billsearch_url = 'http://www.govtrack.us/congress/billsearch.xpd?sponsor=' + data.govtrack_id;
+      data.n_bills_cosponsored_link = data.billsearch_url.replace(/sponsor/, 'cosponsor');
+      data.n_bills_introduced_link = data.billsearch_url;
+      data.n_bills_debated_link = data.billsearch_url + '&status=vote';
+      data.n_bills_enacted_link = data.billsearch_url + '&status=enacted';
+      data.requested_earmarks_link = 'http://watchdog.net/p/' + data.id + '/earmarks';
       data.speeches_link = 'http://www.govtrack.us/congress/person.xpd?tab=speeches&id=' + data.govtrack_id;
       data.requested_earmarks = KTC.Util.friendlyMoney(data.amt_earmark_requested);
       data.received_earmarks = this.mungeReceivedEarmarks(data);
