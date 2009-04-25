@@ -22,6 +22,45 @@ Indy:         #80d68a
     #ktc a img { 
       border: none;
     }
+    
+#ktc .inblock {
+  display: -moz-inline-stack;
+  display: inline-block;
+  zoom: 1;
+  *display: inline;
+}
+
+/* --- Semi-Google-style CSS buttons --- */   
+
+#ktc .btn {
+  background: none;
+  border: 0;
+  color: #383435;
+  padding: 3px 0;
+  cursor: pointer;
+  outline: none;
+}
+  #ktc .btn:hover span, #ktc .btn:hover span span {
+    border-color: #888;
+    color: black;
+  }
+  #ktc .btn:active span {
+    background-position: 0 -400px;
+  }
+  #ktc .btn span {
+    background: #ddd url(/images/bg-button.gif);
+    border-left: 1px solid #b3bab3;
+    border-right: 1px solid #aaa;
+    margin: 0;
+    padding: 3px 0;
+  }
+    #ktc .btn span span {
+      border-bottom: 1px solid #aaa;
+      border-top: 1px solid #b3bab3;
+      border-width: 1px 0;
+      padding: 3px 5px;
+      position: relative;
+    }
   
 /* --- First off, the search box --- */
 #ktc.search {
@@ -63,15 +102,18 @@ Indy:         #80d68a
         height: 30px;
       }
       #ktc.search #ktc_search_input {
-        width: 228px;
-        font: bold 14px "Helvetica Neue", Arial, sans-serif;
+        width: 230px;
+        font: bold 14px/18px "Helvetica Neue", Arial, sans-serif;
         color: #383435;
         outline: none;
+        margin: 0; padding: 0;
       }
       #ktc.search #ktc_search_button {
-        position: absolute;
-        font-size: 9px;
-        margin: 5px 0 0 10px;
+        margin: 1px 0 0 3px;
+        text-transform: uppercase;
+        font-size: 11px;
+        font-weight: normal;    
+        vertical-align: top;
       }
       #ktc.search.searching .searching_for, #ktc.search.searching .search_text,
       #ktc.search.asking .search_for, #ktc.search.asking .search_input,
