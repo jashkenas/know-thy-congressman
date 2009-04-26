@@ -312,8 +312,8 @@ KTC = {
       data.education = this.mungeEducation(data.education);
       data.maverickometer = (data.predictability ? ((1 - data.predictability) * 100).numberFormat("0.0") + '%' : this.UNKNOWN) + " <small>(measures unpredictability)</small>";
       data.speeches = this.mungeSpeeches(data);
-      data.industry_support = this.mungeTable(data, 'opensecrets_industries');
-      data.institution_support = this.mungeTable(data, 'opensecrets_contributors');
+      data.industry_support = this.mungeTable(data, 'opensecrets_industries', 'industry');
+      data.institution_support = this.mungeTable(data, 'opensecrets_contributors', 'institution');
       data.articles = this.mungeArticles(data);
       data.words = this.mungeWords(data);
       data.wikipedia = this.mungeWikipedia(data.wikipedia);
@@ -327,14 +327,14 @@ KTC = {
     
     
     // Create a campaign contribution table from the given data source
-    mungeTable : function(data, key) {
+    mungeTable : function(data, key, template) {
       var html = '';
       if (!data[key]) return;
       for (var i=0; i<this.TOP_N_CONTRIBUTORS; i++) {
         var cont = data[key][i];
         var name = cont.org_name || cont.industry_name;
         var total = KTC.Util.friendlyMoney(cont.total);
-        html += KTC.templates.contributor({name : name, total : total, search : encodeURI(name)});
+        html += KTC.templates[template]({name : name, total : total, search : encodeURI(name)});
       }
       return html;
     },
@@ -484,7 +484,6 @@ KTC = {
           html += KTC.templates.tube(info);
         });
         $J('#ktc .tubes .answer').html(html);
-        console.log(resp);
       });
     },
     
