@@ -153,7 +153,7 @@ KTC = {
       ['words',               'Most Used Words',                  'triple xbig'             ],      
       ['tubes',               '&#8216;Tubes',                     'half list'               ],
       ['industry_support',    'Top 10 Contributing Groups',       'half table list'         ],
-      ['tweets',              '&#8216;Tweets',                    'half list'               ],
+      ['tweets',              'Tweets',                           'half list'               ],
       ['institution_support', 'Top 10 Contributing Institutions', 'half table list'         ],
       ['photographs',         'Photographs',                      'triple'                  ],
       ['articles',            'Recent NYTimes Articles',          'triple open'             ]
