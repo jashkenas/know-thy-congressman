@@ -23,6 +23,10 @@ Indy:         #80d68a
       border: none;
     }
     
+#ktc img {
+  -ms-interpolation-mode: bicubic;
+}
+    
 #ktc .inblock {
   display: -moz-inline-stack;
   display: inline-block;
@@ -130,13 +134,13 @@ Indy:         #80d68a
   font-family: "Helvetica Neue", Arial, sans-serif;
   position: absolute;
   width: 895px;
-  height: 1260px;
+  height: 1600px;
   z-index: 1000;
   text-align: left;
 } 
 #ktc .ktc_inner {
   position: relative;
-  height: 1160px;
+  height: 1500px;
   margin: 70px 60px 70px 70px;
 }
   #ktc .backer {
@@ -146,7 +150,7 @@ Indy:         #80d68a
     top: -20px; left: -20px;
     overflow: visible;
     width: 795px;
-    height: 1160px;
+    height: 1500px;
     opacity: 0.96;
   }
   #ktc .credits {
@@ -215,7 +219,7 @@ Indy:         #80d68a
   }
     #ktc .block {
       border-top: 3px double #b0b8b0;
-      width: 245px; height: 75px;
+      width: 245px; height: 65px;
       margin-right: 10px;
       float: left;
       position: relative;
@@ -240,8 +244,14 @@ Indy:         #80d68a
       #ktc .block.triple {
         width: 755px;
       }
+      #ktc .block.list {
+        height: 270px;
+      }
+        #ktc .block.list small {
+          font-size: 10px;
+        }
       #ktc .block.xbig {
-        height: 110px;
+        height: 75px;
       }
       #ktc .block.thin {
         font-weight: normal;
@@ -256,18 +266,19 @@ Indy:         #80d68a
           margin: 3px 0 0 0;
           text-transform: uppercase;
         }
+        #ktc .block .spinner {
+          position: absolute;
+          width: 16px; height: 16px;
+          top: 3px; right: 5px;
+        }
         #ktc .block .answer {
-          line-height: 30px;
-          font-size: 26px;
+          line-height: 20px;
+          font-size: 20px;
           margin: 5px 0 0 5px;
         }
-          #ktc .block.xbig .answer {
-            line-height: 67px;
-            font-size: 70px;
-          }
           #ktc .block.xsmall .answer {
-            font-size: 14px;
-            line-height: 18px;
+            font-size: 12px;
+            line-height: 16px;
           }
             #ktc .block small {
               font-size: 11px;
@@ -277,29 +288,29 @@ Indy:         #80d68a
             
 /* ------- Let's get specific ----------- */
 #ktc .block.n_bills_cosponsored .answer {
-  line-height: 36px;
-  font-size: 40px;
+  line-height: 20px;
+  font-size: 25px;
 }
 #ktc .block.n_bills_introduced .answer {
-  line-height: 48px;
-  font-size: 53px;
+  line-height: 23px;
+  font-size: 30px;
 }
 #ktc .block.n_bills_debated .answer {
-  line-height: 57px;
-  font-size: 66px;
+  line-height: 26px;
+  font-size: 35px;
 }
 #ktc .block.n_bills_enacted .answer {
-  line-height: 66px;
-  font-size: 80px;
+  line-height: 30px;
+  font-size: 40px;
 }
 #ktc .block.table {
-  height: 130px;
+
 }
   #ktc .block.table .answer {
     font-size: 12px;
   }
     #ktc .table_row {
-      line-height: 17px;
+      line-height: 20px;
       position: relative;
     }
       #ktc .table_total {
@@ -314,14 +325,21 @@ Indy:         #80d68a
   #ktc .block.photographs .photograph {
     float: left;
     width: 75px; height: 75px;
-    margin-right: 4px;
+    margin: 2px 6px 0 0;
     font-size: 0px;
-    border: 2px solid #B0B8B0;
     line-height: 0px;
   }
-    #ktc .block.photographs .photograph:hover {
-      border: 2px solid #383435;
+    #ktc .photographs .photograph, 
+    #ktc .tubes .tube_thumb,
+    #ktc .tweets .twitterer {
+      border: 1px solid #b0b8b0;
     }
+    #ktc .photographs .photograph:hover, 
+    #ktc .tubes .tube_thumb:hover,
+    #ktc .tweets .twitterer:hover {
+      border: 1px solid #383435;
+    }
+    
 #ktc .block.articles .answer {
  margin-top: 8px;
 }
@@ -361,4 +379,51 @@ Indy:         #80d68a
       display: block;
       margin-top: 4px;
       line-height: 10px;
+    }
+#ktc .tubes {
+  
+}
+  #ktc .tubes .tube {
+    position: relative;
+    font-size: 11px;
+    line-height: 14px;
+    margin-bottom: 6px;
+    width: 350px;
+  }
+    #ktc .tube_thumb {
+      display: block;
+      height: 50px; width: 50px;
+      overflow: hidden;
+    }
+      #ktc .tube_thumb img {
+        height: 50px; width: 66.6px;
+        position: relative;
+        left: -8.3px;
+      }
+    #ktc .tube_title {
+      position: absolute;
+      top: 3px; left: 60px;
+    }
+#ktc .tweets {
+  
+}
+  #ktc .tweet {
+    position: relative;
+    font-size: 11px;
+    line-height: 14px;
+    margin-bottom: 6px;
+    width: 350px;
+  }
+    #ktc .twitterer {
+      display: block;
+      height: 50px; width: 50px;
+    }
+      #ktc .twitterer img {
+        height: 50px; width: 50px;
+      }
+    #ktc .tweet_text {
+      position: absolute;
+      top: 3px; left: 60px;
+      height: 45px;
+      overflow: hidden;
     }

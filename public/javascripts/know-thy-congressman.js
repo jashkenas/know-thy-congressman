@@ -140,21 +140,23 @@ KTC = {
     // Map all the info we'd like to display...
     // Data key,              Label,                            Style,                Linked?
     INFO_TO_DISPLAY : [
-      ['n_bills_cosponsored', 'Bills Co-Sponsored',             'short xbig thin',    true],
-      ['n_bills_introduced',  'Bills Introduced',               'short xbig thin',    true],
-      ['n_bills_debated',     'Bills Debated',                  'short xbig thin',    true],
-      ['n_bills_enacted',     'Bills Enacted',                  'short xbig thin',    true],
-      ['born',                'Born',                           'double'                  ],
-      ['speeches',            'Average Words per Speech',       ''                        ],
-      ['requested_earmarks',  'Earmarks Requested',             '',                   true],
-      ['received_earmarks',   'Earmarks Received',              ''                        ],
-      ['maverickometer',      "Maverick-O-Meter",               ''                        ],
-      ['education',           'Education',                      'xsmall triple open'      ],
-      ['industry_support',    'Top 5 Contributing Groups',      'half table'              ],
-      ['institution_support', 'Top 5 Contributing Institutions','half table'              ],
-      ['words',               'Most Used Words',                'triple'                  ],
-      ['photographs',         'Photographs',                    'triple'                  ],
-      ['articles',            'Recent NYTimes Articles',        'triple open'             ]
+      ['n_bills_cosponsored', 'Bills Co-Sponsored',               'short xbig thin',    true],
+      ['n_bills_introduced',  'Bills Introduced',                 'short xbig thin',    true],
+      ['n_bills_debated',     'Bills Debated',                    'short xbig thin',    true],
+      ['n_bills_enacted',     'Bills Enacted',                    'short xbig thin',    true],
+      ['born',                'Born',                             'double'                  ],
+      ['speeches',            'Average Words per Speech',         ''                        ],
+      ['requested_earmarks',  'Earmarks Requested',               '',                   true],
+      ['received_earmarks',   'Earmarks Received',                ''                        ],
+      ['maverickometer',      "Maverick-O-Meter",                 ''                        ],
+      ['education',           'Education',                        'xsmall triple open'      ],
+      ['words',               'Most Used Words',                  'triple xbig'             ],      
+      ['tubes',               '&#8216;Tubes',                     'half list'               ],
+      ['industry_support',    'Top 10 Contributing Groups',       'half table list'         ],
+      ['tweets',              '&#8216;Tweets',                    'half list'               ],
+      ['institution_support', 'Top 10 Contributing Institutions', 'half table list'         ],
+      ['photographs',         'Photographs',                      'triple'                  ],
+      ['articles',            'Recent NYTimes Articles',          'triple open'             ]
     ],
     
     GRAPHS_TO_DRAW : [
@@ -162,13 +164,13 @@ KTC = {
         before : 'n_bills_cosponsored', 
         id : 'ktc_bills_canvas',
         klass : 'xbig triple',
-        width: 755, height: 110,
+        width: 755, height: 75,
         data : ['n_bills_cosponsored', 'n_bills_introduced', 
                 'n_bills_debated', 'n_bills_enacted']
       },
       {
         before : 'requested_earmarks',
-        width: 500, height: 75,
+        width: 500, height: 65,
         klass : 'xbig triple',
         id : 'ktc_earmarks_canvas',
         data : ['amt_earmark_requested', 'amt_earmark_received']
@@ -228,12 +230,16 @@ KTC = {
     
     CONTACT_INFO : ['email', 'phone', 'webform', 'wikipedia', 'congresspedia_url', 'website'],
     
-    TOP_N_CONTRIBUTORS : 5,
+    TOP_N_CONTRIBUTORS : 10,
     TOP_N_ARTICLES     : 5,
     
     UNKNOWN : '--',
     
     BACKGROUND_URL : KTC_ROOT + '/images/backer.png',
+    
+    YOUTUBE_URL : 'http://gdata.youtube.com/feeds/api/videos?orderby=relevance&max-results=4&v=2&alt=json-in-script&callback=?&q=',
+    
+    TWITTER_URL : 'http://search.twitter.com/search.json?callback=?&rpp=4&q=',
         
     
     // Get started by searching for politician on the server
@@ -281,6 +287,7 @@ KTC = {
       KTC.Util.alignElement(this.element[0]);
       this.element.hide();
       $J.browser.msie ? this.element.show() : this.element.fadeIn('slow');
+      this.startSearches(data);
     },
     
     
@@ -327,7 +334,7 @@ KTC = {
         var cont = data[key][i];
         var name = cont.org_name || cont.industry_name;
         var total = KTC.Util.friendlyMoney(cont.total);
-        html += KTC.templates.contributor({name : name, total : total});
+        html += KTC.templates.contributor({name : name, total : total, search : encodeURI(name)});
       }
       return html;
     },
@@ -381,7 +388,7 @@ KTC = {
       if (!edu) return this.UNKNOWN;
       var degrees = [];
       $J.each(edu.replace(/\.$/, '').split(/\W*\n\W*/), function(i, deg) {
-        if (i > 2) return;
+        if (i > 3) return;
         var date = deg.match(/\d+$/);
         deg = KTC.Util.truncate(deg.replace(/,\s*\d+$/, ''), 95);
         if (date) deg += " <small>(" + date.toString() + ")</small>";
@@ -398,13 +405,13 @@ KTC = {
       var counts = $J.map(data.capitol_words, function(w){ return w.word_count; });
       var max = KTC.Util.arrayMax(counts);
       var min = KTC.Util.arrayMin(counts);
-      var ratio = KTC.Util.computeScalingFactor(22, 0, max, min);
+      var ratio = KTC.Util.computeScalingFactor(25, 5, max, min);
       $J.each(data.capitol_words, function(i, word) { 
         word.klass = 'word_' + (i + 1);
         data[word.klass] = word.word_count;
         word.name = data.name;
         word.bioguide_id = data.bioguide_id;
-        word.font_size = 50 + ((word.word_count - min) * ratio);
+        word.font_size = 56 + ((word.word_count - min) * ratio);
         word.line_height = 110 - word.font_size;
         word.margin_top = 15 - word.font_size / 10;
         html += KTC.templates.word(word);
@@ -452,6 +459,51 @@ KTC = {
     // Safely fix the corrupted wikipedia urls that we seem to be getting.
     mungeWikipedia : function(url) {
       return url ? url.replace(/\.org\/\//g, '.org/') : '';
+    },
+    
+    
+    // Start searching for the tubes-'n-tweets
+    startSearches : function(data) {
+      this.searchYouTube(data);
+      this.searchTwitter(data);
+    },
+    
+    
+    // Search YouTube for videos of this legislator.
+    searchYouTube : function(data) {
+      var spin = $J('#ktc .tubes .spinner');
+      spin.show();
+      var url = this.YOUTUBE_URL + data.firstname + '+' + data.lastname;
+      $J.getJSON(url, function(resp) { 
+        spin.hide();
+        var movies = resp.feed.entry;
+        var html = '';
+        $J.each(movies, function(i, movie) { 
+          var info = {link : movie.link[0].href, title : movie.title.$t, 
+              author : movie.author[0].name.$t, thumb : movie.media$group.media$thumbnail[0].url};
+          html += KTC.templates.tube(info);
+        });
+        $J('#ktc .tubes .answer').html(html);
+      });
+    },
+    
+    
+    // Search Twitter for tweets about this legislator.
+    searchTwitter : function(data) {
+      var spin = $J('#ktc .tweets .spinner');
+      spin.show();
+      var url = this.TWITTER_URL + data.firstname + '+' + data.lastname;
+      $J.getJSON(url, function(resp) {
+        spin.hide();
+        var tweets = resp.results;
+        var html = '';
+        $J.each(tweets, function(i, tweet) { 
+          tweet.twitterer_url = "http://twitter.com/" + tweet.from_user;
+          tweet.tweet_url = tweet.twitterer_url + "/statuses/" + tweet.id;
+          html += KTC.templates.tweet(tweet);
+        });
+        $J('#ktc .tweets .answer').html(html);
+      });
     },
     
     
@@ -509,7 +561,7 @@ KTC = {
     
     // Render a single datum in a block.
     renderBlock : function(meta, data) {
-      var params = {key : meta[0], label : meta[1], klass : meta[2], content : data[meta[0]]};
+      var params = {key : meta[0], label : meta[1], klass : meta[2], content : data[meta[0]], ktc_root : data.ktc_root};
       if (meta[3]) { // Linked?
         var href = data[params.key + "_link"];
         params.content = '<a href="' + href + '" target="_blank">' + params.content + '</a>';
@@ -662,16 +714,12 @@ KTC = {
     
     // Utility function for quickly reloading the CSS on the page sans-refresh.
     reloadCss : function(){
-      var process = function(win) {
-        var links = win.document.getElementsByTagName('link');
-        $J.each(links, function(i, link){
-          if (link.rel.toLowerCase().indexOf('stylesheet') < 0 || !link.href) return;
-          var href = link.href.replace(/(&|%5C?)forceReload=\d+/,'');
-          link.href = href + (href.indexOf('?') >= 0 ? '&' : '?') + 'forceReload=' + (new Date().valueOf());
-        });
-        $J.each(win.frames, function(i, frame){ process(frame); });
-      };
-      process(window);
+      var links = document.getElementsByTagName('link');
+      $J.each(links, function(i, link){
+        if (link.rel.toLowerCase().indexOf('stylesheet') < 0 || !link.href) return;
+        var href = link.href.replace(/(&|%5C?)forceReload=\d+/,'');
+        link.href = href + (href.indexOf('?') >= 0 ? '&' : '?') + 'forceReload=' + (new Date().valueOf());
+      });
     }
     
   }
