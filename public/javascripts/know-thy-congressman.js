@@ -412,7 +412,7 @@ KTC = {
         word.name = data.name;
         word.bioguide_id = data.bioguide_id;
         word.font_size = 62 + ((word.word_count - min) * ratio);
-        word.line_height = 110 - word.font_size;
+        word.line_height = 130 - word.font_size;
         word.margin_top = 15 - word.font_size / 10;
         html += KTC.templates.word(word);
       });
