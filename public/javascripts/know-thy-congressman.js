@@ -237,9 +237,9 @@ KTC = {
     
     BACKGROUND_URL : KTC_ROOT + '/images/backer.png',
     
-    YOUTUBE_URL : 'http://gdata.youtube.com/feeds/api/videos?orderby=relevance&max-results=4&v=2&alt=json-in-script&callback=?&q=',
+    YOUTUBE_URL : 'http://gdata.youtube.com/feeds/api/videos/-/News%7Cnews?orderby=relevance&max-results=4&v=2&alt=json-in-script&callback=?&q=',
     
-    TWITTER_URL : 'http://search.twitter.com/search.json?callback=?&rpp=4&q=',
+    TWITTER_URL : 'http://search.twitter.com/search.json?callback=?&rpp=4&phrase=',
         
     
     // Get started by searching for politician on the server
@@ -484,6 +484,7 @@ KTC = {
           html += KTC.templates.tube(info);
         });
         $J('#ktc .tubes .answer').html(html);
+        console.log(resp);
       });
     },
     

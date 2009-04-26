@@ -113,7 +113,7 @@ Indy:         #80d68a
         margin: 0; padding: 0;
       }
       #ktc.search #ktc_search_button {
-        margin: 1px 0 0 3px;
+        margin: 1px 0 0 5px;
         text-transform: uppercase;
         font-size: 11px;
         font-weight: normal;    
@@ -134,13 +134,13 @@ Indy:         #80d68a
   font-family: "Helvetica Neue", Arial, sans-serif;
   position: absolute;
   width: 895px;
-  height: 1600px;
+  height: 1610px;
   z-index: 1000;
   text-align: left;
 } 
 #ktc .ktc_inner {
   position: relative;
-  height: 1500px;
+  height: 1510px;
   margin: 70px 60px 70px 70px;
 }
   #ktc .backer {
@@ -150,7 +150,7 @@ Indy:         #80d68a
     top: -20px; left: -20px;
     overflow: visible;
     width: 795px;
-    height: 1500px;
+    height: 1510px;
     opacity: 0.96;
   }
   #ktc .credits {
