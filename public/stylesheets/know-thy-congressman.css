@@ -354,7 +354,7 @@ Indy:         #80d68a
 }
   #ktc .tubes .tube {
     position: relative;
-    font-size: 11px;
+    font-size: 12px;
     line-height: 14px;
     margin-bottom: 6px;
     width: 350px;
@@ -383,6 +383,7 @@ Indy:         #80d68a
   #ktc .tweet {
     position: relative;
     font-size: 11px;
+    font-weight: normal;
     line-height: 14px;
     margin-bottom: 6px;
     width: 350px;
