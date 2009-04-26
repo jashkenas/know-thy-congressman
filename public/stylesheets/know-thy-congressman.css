@@ -37,6 +37,7 @@ Indy:         #80d68a
 /* --- First off, the search box --- */
 #ktc.search {
   position: absolute;
+  text-align: left;
   z-index: 500;
   width: 300px; height: 70px;
   margin: 0; padding: 40px;
@@ -98,6 +99,7 @@ Indy:         #80d68a
 /* --- Now the real politician page --- */
 #ktc.politician {
   cursor: move;
+  text-align: left;
   color: #383435;
   font-weight: bold;
   font-family: "Helvetica Neue", Arial, sans-serif;
