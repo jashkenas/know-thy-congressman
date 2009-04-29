@@ -483,7 +483,7 @@ KTC = {
               author : movie.author[0].name.$t, thumb : movie.media$group.media$thumbnail[0].url};
           html += KTC.templates.tube(info);
         });
-        $J('#ktc .tubes .answer').html(html);
+        $J('#ktc .tubes .ktc_answer').html(html);
       });
     },
     
@@ -502,7 +502,7 @@ KTC = {
           tweet.tweet_url = tweet.twitterer_url + "/statuses/" + tweet.id;
           html += KTC.templates.tweet(tweet);
         });
-        $J('#ktc .tweets .answer').html(html);
+        $J('#ktc .tweets .ktc_answer').html(html);
       });
     },
     
@@ -554,7 +554,7 @@ KTC = {
         var photo = data.flickr[i];
         if (!photo) return;
         var html = KTC.templates.photograph(photo);
-        KTC.Politician.element.find('.photographs .answer').append(html);
+        KTC.Politician.element.find('.photographs .ktc_answer').append(html);
       }
     },
     

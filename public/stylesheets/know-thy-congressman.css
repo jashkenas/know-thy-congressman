@@ -231,7 +231,7 @@ Indy:         #80d68a
         height: auto;
         padding-bottom: 20px;
       }
-        #ktc .block .question {
+        #ktc .block .ktc_question {
           font-size: 11px;
           font-weight: normal;
           margin: 3px 0 0 0;
@@ -242,12 +242,12 @@ Indy:         #80d68a
           width: 16px; height: 16px;
           top: 3px; right: 5px;
         }
-        #ktc .block .answer {
+        #ktc .block .ktc_answer {
           line-height: 20px;
           font-size: 20px;
           margin: 5px 0 0 5px;
         }
-          #ktc .block.xsmall .answer {
+          #ktc .block.xsmall .ktc_answer {
             font-size: 12px;
             line-height: 16px;
           }
@@ -258,26 +258,26 @@ Indy:         #80d68a
             
             
 /* ------- Let's get specific ----------- */
-#ktc .block.n_bills_cosponsored .answer {
+#ktc .block.n_bills_cosponsored .ktc_answer {
   line-height: 20px;
   font-size: 25px;
 }
-#ktc .block.n_bills_introduced .answer {
+#ktc .block.n_bills_introduced .ktc_answer {
   line-height: 23px;
   font-size: 30px;
 }
-#ktc .block.n_bills_debated .answer {
+#ktc .block.n_bills_debated .ktc_answer {
   line-height: 26px;
   font-size: 35px;
 }
-#ktc .block.n_bills_enacted .answer {
+#ktc .block.n_bills_enacted .ktc_answer {
   line-height: 30px;
   font-size: 40px;
 }
 #ktc .block.table {
 
 }
-  #ktc .block.table .answer {
+  #ktc .block.table .ktc_answer {
     font-size: 12px;
   }
     #ktc .table_row {
@@ -311,7 +311,7 @@ Indy:         #80d68a
       border: 1px solid #383435;
     }
     
-#ktc .block.articles .answer {
+#ktc .block.articles .ktc_answer {
  margin-top: 8px;
 }
   #ktc .nytimes_article {
