@@ -30,23 +30,22 @@ module Services
     merge_data(data, sunlight_data)
     raise NotFoundException, "Can't find a legislator by that name..." if sunlight_data.empty?
     first_name, last_name = extract_name_from_congresspedia(data)
-    bioguide_id = data['bioguide_id']
+    bioguide_id, crp_id = data['bioguide_id'], data['crp_id']
             
-    watchdog = Thread.new { watchdog_data = Watchdog.search(bioguide_id) }
-    flickr   = Thread.new { flickr_data   = Flickr.search(first_name, last_name) }
-    tags     = Thread.new { tags_data     = NewYorkTimes.search_tags(data['search_first_name'], first_name, last_name) }
-    words    = Thread.new { words_data    = CapitolWords.search(bioguide_id) }
+    watchdog    = Thread.new { watchdog_data    = Watchdog.search(bioguide_id) }
+    flickr      = Thread.new { flickr_data      = Flickr.search(first_name, last_name) }
+    tags        = Thread.new { tags_data        = NewYorkTimes.search_tags(data['search_first_name'], first_name, last_name) }
+    words       = Thread.new { words_data       = CapitolWords.search(bioguide_id) }
+    contributor = Thread.new { contributor_data = OpenSecrets.search_contributors(crp_id) }
+    industry    = Thread.new { industry_data    = OpenSecrets.search_industries(crp_id) }
     
-    watchdog.join and tags.join
-    merge_data(data, watchdog_data, tags_data)
-    os_id, person_facet = data['opensecretsid'], data['person_facet']
+    tags.join
+    merge_data(data, tags_data)
     
-    contributor = Thread.new { contributor_data = OpenSecrets.search_contributors(os_id) }
-    industry    = Thread.new { industry_data    = OpenSecrets.search_industries(os_id) }
-    articles    = Thread.new { articles_data    = NewYorkTimes.search_articles(person_facet) }
+    articles    = Thread.new { articles_data    = NewYorkTimes.search_articles(data['person_facet']) }
     
-    contributor.join and industry.join and articles.join and flickr.join and words.join
-    merge_data(data, contributor_data, industry_data, articles_data, flickr_data, words_data)
+    watchdog.join and contributor.join and industry.join and articles.join and flickr.join and words.join
+    merge_data(data, watchdog_data, contributor_data, industry_data, articles_data, flickr_data, words_data)
     data
   end
   
