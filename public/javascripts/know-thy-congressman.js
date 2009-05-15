@@ -268,6 +268,37 @@ KTC = {
       var data = {name : this.mungeName(name), callback : 'KTC.Politician.loaded'};
       var url = KTC.Loader.urls.politician(data);
       $J.ajax({url : url, dataType : 'script'});
+      this.recordSearch();
+    },
+    
+    
+    // Hackety analytics code from Remy Sharp. Ping Google Analytics...
+    recordSearch : function() {    
+      var rand = function(min, max) {
+        return min + Math.floor(Math.random() * (max - min));
+      };
+      var i=1000000000,
+          utmn=rand(i,9999999999), //random request number
+          cookie=rand(10000000,99999999), //random cookie number
+          random=rand(i,2147483647), //number under 2147483647
+          today=(new Date()).getTime(),
+          win = window.location,
+          img = new Image(),
+          urchinUrl = 'http://www.google-analytics.com/__utm.gif?utmwv=1.3&utmn='
+              +utmn+'&utmsr=-&utmsc=-&utmul=-&utmje=0&utmfl=-&utmdt=-&utmhn='
+              +"know-thy-congressman.com"+'&utmr='+win+'&utmp='
+              +"/find.js"+'&utmac='
+              +"UA-8853528-1"+'&utmcc=__utma%3D'
+              +cookie+'.'+random+'.'+today+'.'+today+'.'
+              +today+'.2%3B%2B__utmb%3D'
+              +cookie+'%3B%2B__utmc%3D'
+              +cookie+'%3B%2B__utmz%3D'
+              +cookie+'.'+today
+              +'.2.2.utmccn%3D(referral)%7Cutmcsr%3D' + win.host + '%7Cutmcct%3D' + win.pathname + '%7Cutmcmd%3Dreferral%3B%2B__utmv%3D'
+              +cookie+'.-%3B';
+      
+      // trigger the tracking
+      img.src = urchinUrl;
     },
     
     
