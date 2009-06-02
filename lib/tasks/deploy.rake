@@ -16,5 +16,5 @@ task :staging_deploy do
   todo << 'git fetch origin'
   todo << 'git merge origin/master'
   todo << 'touch tmp/restart.txt'
-  system "ssh -t ktc@hammond.sunlightlabs.com '#{todo.join(" && ")}'"
+  system "ssh -t ktc@hammond.sunlightlabs.org '#{todo.join(" && ")}'"
 end
