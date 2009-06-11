@@ -3,6 +3,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Politician do
   before(:each) do
     @valid_attributes = {
+      :first_name => "Yvette",
+      :last_name  => "Clarke"
     }
   end
 
