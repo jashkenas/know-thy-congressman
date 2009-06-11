@@ -309,7 +309,12 @@ KTC = {
       if (ktc.length == 0) return;        // Bail if they've closed the window.
       data = window.eval("("+data+")");
       if (data.error) return KTC.Loader.showError(data);
-      if (!data.born && !data.n_earmark_received && !data.education && !data.n_bills_introduced) return KTC.Loader.showError({error : "Can't find enough information..."});
+
+      if (!data.born)               return KTC.Loader.showError({error : "Can't find date of birth"});
+      if (!data.n_earmark_received) return KTC.Loader.showError({error : "Can't find numbers of earmarks received"});
+      if (!data.education)          return KTC.Loader.showError({error : "Can't find education data"});
+      if (!data.n_bills_introduced) return KTC.Loader.showError({error : "Can't find number of bills introduced"});
+
       data = this.mungeData(data);
       if ((typeof(console) != 'undefined') && console.log) console.log(data);
       ktc.remove();
