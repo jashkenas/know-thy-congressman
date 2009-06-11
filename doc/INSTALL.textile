@@ -1,0 +1,53 @@
+h1. How to install Know Thy Congressman (KTC)
+
+h2. Get the Code from Git
+
+We use git for managing our source code. Also note that this project contains
+git submodules. This helps us control how we depend on external code, without
+having to commit external code into this repository.
+
+h3. Clone the repository
+
+For the first time you clone the repository:
+
+<code>
+git clone git://github.com/sunlightlabs/know-thy-congressman.git
+cd know-thy-congressman
+</code>
+
+For git projects that don't have submodules, that would be it. Because KTC
+uses submodules, you will need to run two more commands:
+
+<code>
+git submodule init
+git submodule update
+</code>
+
+h3. Getting repository updates
+
+To get updates from the master branch:
+
+<code>
+git pull origin master
+</code>
+
+To check to see if you need to get submodule updates do this:
+
+<code>
+git submodule status
+</code>
+
+If you see one or more pluses (+) in the left-hand column, then it means that
+your submodules need to be updated:
+
+<code>
+git submodule update
+</code>
+
+h2. Setup the Rails App
+
+Know Thy Congressman (KTC) is an application built on Ruby on Rails.
+
+To get your local installation working, you will need to follow the usual
+steps, such as setting up your database.yaml file and any related database
+commands.
