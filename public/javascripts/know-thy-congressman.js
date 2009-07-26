@@ -251,14 +251,16 @@ KTC = {
     },
     
     
-    // Get the selected text from the document.
-    // May need to call this before JQuery loads.
+    // Get the selected text from the document. Should work before JQuery loads.
+    // If a KTC_SEARCH is specified on the page, and there is no selected text
+    // then it takes precedence.
     getSelectedText : function() {
       var input = document.getElementById('ktc_search_input');
       var text = input && input.value ? input.value : '';
       if (!text) text = window.getSelection ? window.getSelection().toString() : 
                         document.getSelection ? document.getSelection().toString() :
                         document.selection ? document.selection.createRange().text : '';
+      if (!text && window.KTC_SEARCH) text = window.KTC_SEARCH;
       return text;
     },
     
