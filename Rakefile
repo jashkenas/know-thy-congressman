@@ -8,3 +8,11 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 
 require 'tasks/rails'
+
+namespace :cache do
+  task :clear => :environment do 
+    puts "about to clear the politician"
+    Politician.destroy_all
+    puts "thanks for playing!"
+  end 
+end
