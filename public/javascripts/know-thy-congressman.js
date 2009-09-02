@@ -251,14 +251,16 @@ KTC = {
     },
     
     
-    // Get the selected text from the document.
-    // May need to call this before JQuery loads.
+    // Get the selected text from the document. Should work before JQuery loads.
+    // If a KTC_SEARCH is specified on the page, and there is no selected text
+    // then it takes precedence.
     getSelectedText : function() {
       var input = document.getElementById('ktc_search_input');
       var text = input && input.value ? input.value : '';
       if (!text) text = window.getSelection ? window.getSelection().toString() : 
                         document.getSelection ? document.getSelection().toString() :
                         document.selection ? document.selection.createRange().text : '';
+      if (!text && window.KTC_SEARCH) text = window.KTC_SEARCH;
       return text;
     },
     
@@ -284,18 +286,18 @@ KTC = {
           today=(new Date()).getTime(),
           win = window.location,
           img = new Image(),
-          urchinUrl = 'http://www.google-analytics.com/__utm.gif?utmwv=1.3&utmn='
-              +utmn+'&utmsr=-&utmsc=-&utmul=-&utmje=0&utmfl=-&utmdt=-&utmhn='
-              +"know-thy-congressman.com"+'&utmr='+win+'&utmp='
-              +"/find.js"+'&utmac='
-              +"UA-8853528-1"+'&utmcc=__utma%3D'
-              +cookie+'.'+random+'.'+today+'.'+today+'.'
-              +today+'.2%3B%2B__utmb%3D'
-              +cookie+'%3B%2B__utmc%3D'
-              +cookie+'%3B%2B__utmz%3D'
-              +cookie+'.'+today
-              +'.2.2.utmccn%3D(referral)%7Cutmcsr%3D' + win.host + '%7Cutmcct%3D' + win.pathname + '%7Cutmcmd%3Dreferral%3B%2B__utmv%3D'
-              +cookie+'.-%3B';
+          urchinUrl = 'http://www.google-analytics.com/__utm.gif?utmwv=1.3&utmn=' +
+            utmn + '&utmsr=-&utmsc=-&utmul=-&utmje=0&utmfl=-&utmdt=-&utmhn=' + 
+            "know-thy-congressman.com" + '&utmr=' + win + '&utmp=' + 
+            "/find.js" + '&utmac=' + 
+            "UA-8853528-1" + '&utmcc=__utma%3D' + 
+            cookie + '.' + random + '.' + today + '.' + today + '.' + 
+            today + '.2%3B%2B__utmb%3D' + 
+            cookie + '%3B%2B__utmc%3D' + 
+            cookie + '%3B%2B__utmz%3D' + 
+            cookie + '.' + today + 
+            '.2.2.utmccn%3D(referral)%7Cutmcsr%3D' + win.host + '%7Cutmcct%3D' + win.pathname + '%7Cutmcmd%3Dreferral%3B%2B__utmv%3D' + 
+            cookie + '.-%3B';
       
       // trigger the tracking
       img.src = urchinUrl;
@@ -309,7 +311,12 @@ KTC = {
       if (ktc.length == 0) return;        // Bail if they've closed the window.
       data = window.eval("("+data+")");
       if (data.error) return KTC.Loader.showError(data);
-      if (!data.born && !data.n_earmark_received && !data.education && !data.n_bills_introduced) return KTC.Loader.showError({error : "Can't find enough information..."});
+
+      if (!data.born)               return KTC.Loader.showError({error : "Can't find date of birth"});
+      if (!data.n_earmark_received) return KTC.Loader.showError({error : "Can't find numbers of earmarks received"});
+      if (!data.education)          return KTC.Loader.showError({error : "Can't find education data"});
+      if (!data.n_bills_introduced) return KTC.Loader.showError({error : "Can't find number of bills introduced"});
+
       data = this.mungeData(data);
       if ((typeof(console) != 'undefined') && console.log) console.log(data);
       ktc.remove();

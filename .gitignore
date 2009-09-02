@@ -5,3 +5,4 @@ db/data.yml
 public/images/*.psd
 config/secrets.yml
 raw
+.DS_Store

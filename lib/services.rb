@@ -14,7 +14,6 @@ module Services
   # If we can't find a resource for a particular congressman, then:
   class NotFoundException < RuntimeError; end
   
-  
   # Dig up all the dirt available about a congressman...
   # Try to execute these calls as much in parallel as possible. However, some
   # requests must be made before others, so take care of that as well...
@@ -28,27 +27,27 @@ module Services
     sunlight = Thread.new { sunlight_data = Sunlight.search(first_name, last_name) }
     sunlight.join
     merge_data(data, sunlight_data)
+
     raise NotFoundException, "Can't find a legislator by that name..." if sunlight_data.empty?
+
     first_name, last_name = extract_name_from_congresspedia(data)
     bioguide_id, crp_id = data['bioguide_id'], data['crp_id']
-            
     watchdog    = Thread.new { watchdog_data    = Watchdog.search(bioguide_id) }
     flickr      = Thread.new { flickr_data      = Flickr.search(first_name, last_name) }
-    tags        = Thread.new { tags_data        = NewYorkTimes.search_tags(data['search_first_name'], first_name, last_name) }
     words       = Thread.new { words_data       = CapitolWords.search(bioguide_id) }
     contributor = Thread.new { contributor_data = OpenSecrets.search_contributors(crp_id) }
     industry    = Thread.new { industry_data    = OpenSecrets.search_industries(crp_id) }
-    
+
+    tags        = Thread.new { tags_data        = NewYorkTimes.search_tags(data['search_first_name'], first_name, last_name) }
     tags.join
     merge_data(data, tags_data)
     
     articles    = Thread.new { articles_data    = NewYorkTimes.search_articles(data['person_facet']) }
     
-    watchdog.join and contributor.join and industry.join and articles.join and flickr.join and words.join
+    [watchdog, contributor, industry, articles, flickr, words].each { |t| t.join }
     merge_data(data, watchdog_data, contributor_data, industry_data, articles_data, flickr_data, words_data)
     data
   end
-  
   
   private
   
@@ -56,7 +55,6 @@ module Services
   def self.merge_data(data, *results)
     results.each {|result| data.merge!(result) }
   end
-  
   
   # We really need to try to get a valid first name and last name. The sunlight
   # labs API takes care of searching for a congressperson, but sometimes returns
