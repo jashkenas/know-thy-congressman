@@ -312,7 +312,7 @@ KTC = {
       data = window.eval("("+data+")");
       if (data.error) return KTC.Loader.showError(data);
 
-      if (!data.born)               return KTC.Loader.showError({error : "Can't find date of birth"});
+      if (!data.birthday)           return KTC.Loader.showError({error : "Can't find date of birth"});
       if (!data.n_earmark_received) return KTC.Loader.showError({error : "Can't find numbers of earmarks received"});
       if (!data.education)          return KTC.Loader.showError({error : "Can't find education data"});
       if (!data.n_bills_introduced) return KTC.Loader.showError({error : "Can't find number of bills introduced"});
